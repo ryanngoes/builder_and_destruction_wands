@@ -1,0 +1,27 @@
+{
+  "format_version": "1.26.0",
+  "minecraft:item": {
+    "description": {
+      "identifier": "rc_bdw:diamond_builder_wand",
+      "menu_category": {
+        "category": "items",
+        "is_hidden_in_commands": false
+      }
+    },
+    "components": {
+      "minecraft:icon": "rc_bdw:diamond_builder_wand",
+      "minecraft:durability": {
+        "max_durability": 1025
+      },
+      "minecraft:cooldown": {
+        "category": "rc_bdw:is_builder_wand",
+        "duration": 1
+      },
+      "minecraft:hand_equipped": true,
+      "rc_bdw:is_builder_wand":{
+        "area": 9
+      },
+      "minecraft:max_stack_size": 1
+    }
+  }
+}

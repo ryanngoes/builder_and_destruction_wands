@@ -1,0 +1,22 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "rc_bdw:builder_selection",
+      "materials": {
+        "default": "block_selection",
+        "invisible": "coloroverwrite.customskinning"
+      },
+      "textures": {
+        "default": "textures/rc/bdw/blocks/builder_selection"
+      },
+      "geometry": {
+        "default": "geometry.rc_bdw.selection"
+      },
+      "render_controllers": [
+        "controller.render.rc_bdw.block_outline",
+        "controller.render.rc_bdw.block_outline.invisible"
+      ]
+    }
+  }
+}

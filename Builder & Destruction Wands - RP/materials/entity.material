@@ -1,0 +1,98 @@
+{
+  "materials": {
+    "version": "1.0.0",
+    "block_selection:stencilref": {
+      "depthFunc": "Always",
+      "frontFace": { "stencilFunc": "NotEqual", "stencilPassOp": "Replace" },
+      "backFace": { "stencilFunc": "NotEqual", "stencilPassOp": "Replace" },
+      "variants": [
+        { "zbpknso": { "stencilRef": 4, "stencilReadMask": 4 } },
+        { "jpkpgge": { "stencilRef": 8, "stencilReadMask": 8 } }
+      ],
+      "+states": ["Blending", "DisableDepthWrite"],
+      "-defines": ["FANCY"],
+      "blendSrc": "SourceAlpha",
+  "blendDst": "OneMinusSrcAlpha",
+      "+defines": ["USE_UV_ANIM"]
+    },
+    "stencilref:entity_emissive": {
+      "+states": ["EnableStencilTest"],
+      "-states": ["DisableCulling"],
+      "frontFace": { "stencilFunc": "NotEqual" },
+      "backFace": { "stencilFunc": "NotEqual" },
+      "variants": [
+        { "zbpknso": { "stencilRef": 4, "stencilReadMask": 4 } },
+        { "jpkpgge": { "stencilRef": 8, "stencilReadMask": 8 } }
+      ],
+      "stencilRef": 2,
+      "stencilReadMask": 2,
+      "stencilWriteMask": 0,
+      "+defines": ["USE_UV_ANIM"]
+    },
+    "coloroverwrite:opaque": {
+      "depthFunc": "Always",
+      "+states": ["DisableColorWrite"],
+      "-states": ["DisableCulling"],
+      "+defines": ["USE_UV_ANIM"]
+    },
+    "opaque:entity": {},
+    "entity_static": {
+      "vertexShader": "shaders/entity.vertex",
+      "vrGeometryShader": "shaders/entity.geometry",
+      "fragmentShader": "shaders/entity.fragment",
+      "+defines": ["USE_UV_ANIM"],
+      "vertexFields": [
+        { "field": "Position" },
+        { "field": "Normal" },
+        { "field": "UV0" }
+      ],
+      "variants": [
+        {
+          "skinning": {
+            "+defines": ["USE_SKINNING", "USE_UV_ANIM"],
+            "vertexFields": [
+              { "field": "Position" },
+              { "field": "BoneId0" },
+              { "field": "Normal" },
+              { "field": "UV0" }
+            ]
+          }
+        },
+        {
+          "skinning_color": {
+            "+defines": ["USE_SKINNING", "USE_OVERLAY", "USE_UV_ANIM"],
+            "+states": ["Blending"],
+            "vertexFields": [
+              { "field": "Position" },
+              { "field": "BoneId0" },
+              { "field": "Color" },
+              { "field": "Normal" },
+              { "field": "UV0" }
+            ]
+          }
+        },
+        {
+          "customskinning": {
+            "+defines": ["USE_SKINNING", "USE_UV_ANIM"],
+            "vertexFields": [
+              { "field": "Position" },
+              { "field": "BoneId0" },
+              { "field": "Normal" },
+              { "field": "UV0" }
+            ],
+            "+states": ["EnableStencilTest", "StencilWrite"],
+            "frontFace": {
+              "stencilFunc": "Always",
+              "stencilPassOp": "Replace"
+            },
+            "backFace": { "stencilFunc": "Always", "stencilPassOp": "Replace" },
+            "stencilRef": 2,
+            "stencilWriteMask": 2
+          }
+        }
+      ],
+      "msaaSupport": "Both",
+      "+samplerStates": [{ "samplerIndex": 0, "textureFilter": "Point" }]
+    }
+  }
+}

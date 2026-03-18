@@ -1,0 +1,17 @@
+## Ui - Config Wand
+ui.builder_wand:config.wand.title=Wand's Settings
+ui.builder_wand:config.wand.slider=Select the max area size
+ui.builder_wand:config.wand.toggle=Connected Blocks
+
+## items
+item.rc_bdw:diamond_builder_wand=Diamond Builder Wand
+item.rc_bdw:golden_builder_wand=Golden Builder Wand
+item.rc_bdw:iron_builder_wand=Iron Builder Wand
+item.rc_bdw:netherite_builder_wand=Netherite Builder Wand
+item.rc_bdw:wooden_builder_wand=Wooden Builder Wand
+
+## Item Catalog
+builder_wand:itemGroup.name.builder_wand=Builder's Wands
+
+pack.description=Don't have description
+pack.name=Builder & Destruction Wands - RP
