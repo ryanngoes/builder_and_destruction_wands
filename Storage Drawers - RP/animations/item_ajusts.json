@@ -1,0 +1,229 @@
+{
+  "format_version": "1.20.41",
+  "animations": {
+    "animation.rc_sd.item_ajust_normal": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "position": [0.9, 2.7, 7.8],
+          "rotation": [0, 4, 0]
+        },
+        "rootItem": {
+          "scale": [0.8, 0.8, 0.8],
+          "rotation": [0, -91, -20.5]
+        },
+        "rightArm": {
+          "rotation": [-35.0, 75.0, 40.0]
+        }
+      }
+    },
+    "animation.rc_sd.item_ajust_block": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": [0, 0, 0],
+          "position": [0, 0, 0]
+        },
+        "rootItem": {
+          "scale": [1.1, 1.1, 1.1],
+          "rotation": [-4.5, -180, 1],
+          "position": [-0.2, 3.4, -5.5]
+        },
+        "rightArm": {
+          "rotation": [-14.0, 45.0, 5.0]
+        }
+      }
+    },
+    "animation.rc_sd.item_ajust_weapon": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": [0, 0, 0]
+        },
+        "rootItem": {
+          "scale": [0.45, 0.45, 0.45],
+          "rotation": [0, 225, -92],
+          "position": [-3, -5.7, 2.3]
+        },
+        "rightArm": {
+          "position": [8, -13, 6],
+          "rotation": [-30, 45.0, 5.0]
+        }
+      }
+    },
+    "animation.rc_sd.item_ajust_misc": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": [0, 0, 0]
+        },
+        "rootItem": {
+          "scale": [0.9, 0.9, 0.9],
+          "rotation": [-28, 45, -2.5],
+          "position": [5.75, 2, 3.5]
+        },
+        "rightArm": {
+          "position": [0, 0, 8],
+          "rotation": [0, 0, 0]
+        }
+      }
+    },
+    "animation.rc_sd.item_ajust_small": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": [0, 0, 0]
+        },
+        "rootItem": {
+          "rotation": [0, -90, -24.5],
+          "position": [-2.2, -4.5, 4.4]
+        },
+        "rightArm": {
+          "rotation": [-35.0, 75.0, 40.0]
+        }
+      }
+    },
+    "animation.rc_sd.item_ajust_beacon": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": [0, 0, 0]
+        },
+        "rootItem": {
+          "rotation": [-4.5, -90, 0],
+          "position": [-0.3, 2.2, 5.4]
+        },
+        "rightArm": {
+          "rotation": [-14.0, 45.0, 5.0]
+        }
+      }
+    },
+    "animation.rc_sd.item_ajust_anvil": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": [0, 0, 0]
+        },
+        "rootItem": {
+          "rotation": [-4.5, -90, 0],
+          "position": [-0.5, 2.15, 6.8]
+        },
+        "rightArm": {
+          "rotation": [-14.0, 45.0, 5.0]
+        }
+      }
+    },
+    "animation.rc_sd.item_ajust_chest": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": [0, 0, 0]
+        },
+        "rootItem": {
+          "scale": [1.1, 1.1, 1.1],
+          "rotation": [-4.5, 0, -0.7],
+          "position": [8.7, 3.4, 5.5]
+        },
+        "rightArm": {
+          "rotation": [-14.0, 45.0, 5.0]
+        }
+      }
+    },
+    "animation.rc_sd.item_ajust_heavy": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": [0, 0, 0]
+        },
+        "rootItem": {
+          "rotation": [-5.5, -95, 1.8],
+          "position": [-0.2, 2.6, 1.0]
+        },
+        "rightArm": {
+          "rotation": [-14.0, 50.0, 5.0]
+        }
+      }
+    },
+    "animation.rc_sd.item_ajust_fence": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": [0, 0, 0]
+        },
+        "rootItem": {
+          "scale": [1, 1, 1],
+          "rotation": [-4.5, -90, 0],
+          "position": [-3.4, -0.8, 3]
+        },
+        "rightArm": {
+          "rotation": [-14.0, 45.0, 5.0]
+        }
+      }
+    },
+    "animation.rc_sd.item_ajust_rod": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": [0, 0, 0]
+        },
+        "rootItem": {
+          "rotation": [-15, -140, 0],
+          "position": [-0.9, -3, 3.5]
+        },
+        "rightArm": {
+          "rotation": [-30.0, 75.0, 40.0]
+        }
+      }
+    },
+    "animation.rc_sd.item_ajust_dripstone": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": [0, 0, 0]
+        },
+        "rootItem": {
+          "scale": [0.5, 0.5, 0.5],
+          "rotation": [-0.7, 48, 56],
+          "position": [11.5, 2, 4.1]
+        },
+        "rightArm": {
+          "position": [8, -13, 6],
+          "rotation": [-30, 45.0, 5.0]
+        }
+      }
+    },
+    "animation.rc_sd.item_ajust_ssb": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "position": [1.6, 3.2, 7.8],
+          "rotation": [0, 4, 0]
+        },
+        "rootItem": {
+          "scale": [0.8, 0.8, 0.8],
+          "rotation": [0, -90, -20.5]
+        },
+        "rightArm": {
+          "rotation": [-35.0, 75.0, 40.0]
+        }
+      }
+    },
+	"animation.rc_sd.item_ajust_block_layer": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": [0, 0, 0],
+          "position": [0, 0, 0]
+        },
+        "rootItem": {
+          "scale": [0.8, 0.8, 0.001],
+          "rotation": [0, 0, 0],
+          "position": [4.1, -1.4, 2.7]
+        },
+        "rightArm": {
+          "rotation": [-45, 0.0, 0.0]
+        }
+      }
+    }
+  }
+}

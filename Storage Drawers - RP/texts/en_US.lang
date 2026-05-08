@@ -1,0 +1,56 @@
+tile.rc_sd:drawer.name=Drawer
+tile.rc_sd:storage.name=Storage
+tile.rc_sd:upgrade.name=Upgrade
+tile.rc_sd:utility.name=Utility
+
+need_upgrade.text=Need Upgrade: %s/%s
+
+ender_drawer=Ender Drawer
+
+tile.rc_sd:acacia_drawer_1x1.name=Acacia Drawer (1x1)
+tile.rc_sd:birch_drawer_1x1.name=Birch Drawer (1x1)
+tile.rc_sd:cherry_drawer_1x1.name=Cherry Drawer (1x1)
+tile.rc_sd:crimson_drawer_1x1.name=Crimson Drawer (1x1)
+tile.rc_sd:dark_oak_drawer_1x1.name=Dark Oak Drawer (1x1)
+tile.rc_sd:jungle_drawer_1x1.name=Jungle Drawer (1x1)
+tile.rc_sd:mangrove_drawer_1x1.name=Mangrove Drawer (1x1)
+tile.rc_sd:oak_drawer_1x1.name=Oak Drawer (1x1)
+tile.rc_sd:spruce_drawer_1x1.name=Spruce Drawer (1x1)
+tile.rc_sd:warped_drawer_1x1.name=Warped Drawer (1x1)
+
+tile.rc_sd:acacia_drawer_2=Acacia Drawer (1x2)
+tile.rc_sd:birch_drawer_2=Birch Drawer (1x2)
+tile.rc_sd:cherry_drawer_2=Cherry Drawer (1x2)
+tile.rc_sd:crimson_drawer_2=Crimson Drawer (1x2)
+tile.rc_sd:dark_oak_drawer_2=Dark Oak Drawer (1x2)
+tile.rc_sd:jungle_drawer_2=Jungle Drawer (1x2)
+tile.rc_sd:mangrove_drawer_2=Mangrove Drawer (1x2)
+tile.rc_sd:oak_drawer_2=Oak Drawer (1x2)
+tile.rc_sd:spruce_drawer_2=Spruce Drawer (1x2)
+tile.rc_sd:warped_drawer_2=Warped Drawer (1x2)
+
+tile.rc_sd:acacia_drawer_4=Acacia Drawer (2x2)
+tile.rc_sd:birch_drawer_4=Birch Drawer (2x2)
+tile.rc_sd:cherry_drawer_4=Cherry Drawer (2x2)
+tile.rc_sd:crimson_drawer_4=Crimson Drawer (2x2)
+tile.rc_sd:dark_oak_drawer_4=Dark Oak Drawer (2x2)
+tile.rc_sd:jungle_drawer_4=Jungle Drawer (2x2)
+tile.rc_sd:mangrove_drawer_4=Mangrove Drawer (2x2)
+tile.rc_sd:oak_drawer_4=Oak Drawer (2x2)
+tile.rc_sd:spruce_drawer_4=Spruce Drawer (2x2)
+tile.rc_sd:warped_drawer_4=Warped Drawer (2x2)
+
+storage_controller=Storage Controller
+
+copper_upgrade=§nCopper Upgrade
+gold_upgrade=§gGold Upgrade
+diamond_upgrade=§sDiamond Upgrade
+netherite_upgrade=§0Netherite Upgrade
+iron_downgrade=§8Iron Downgrade
+
+void_utility=Void Utility
+collector_utility=Collector Utility
+configuration_tool=Configuration Tool
+linking_tool=Linking Tool
+
+rc_sd:itemGroup=Functional Storage

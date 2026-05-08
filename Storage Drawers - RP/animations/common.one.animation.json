@@ -1,0 +1,77 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.rc_sd.adjust_display": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "display_numbers": {
+          "position": [
+            "(q.property('rc_sd:suffix') != 0 && q.property('rc_sd:digit_0') != 10) ? 0.286 * 1 : (q.property('rc_sd:suffix') != 0 && q.property('rc_sd:digit_1') != 10) ? 0.286 * 4 : (q.property('rc_sd:suffix') != 0 ? 0.286 * 7 : (q.property('rc_sd:digit_0') != 10 ? -0.286 * 6 : (q.property('rc_sd:digit_1') != 10 ? -0.286 * 3 : 0)))",
+            -1,
+            0
+          ]
+        }
+      }
+    },
+    "animation.rc_sd.storage_drawer.rotation": {
+      "loop": true,
+      "bones": {
+        "root": {
+          "rotation": [0, "q.property('rc_sd:rotation_y')", 0],
+          "position": [0, 0, 0]
+        },
+        "globalItemAjust": {
+          "position": [-6.1, -2, 8],
+          "scale": [1.5, 1.5, 1.5]
+        }
+      }
+    },
+    "animation.rc_sd.selection": {
+      "loop": true,
+      "bones": {
+        "outline": {
+          "scale": "q.property('rc_sd:selection') ? 1 : 0"
+        },
+        "above_west": {
+          "scale": ["v.distance", "v.distance", 1]
+        },
+        "above_east": {
+          "scale": ["v.distance", "v.distance", 1]
+        },
+        "above_north": {
+          "scale": [1, "v.distance", "v.distance"]
+        },
+        "above_south": {
+          "scale": [1, "v.distance", "v.distance"]
+        },
+
+        "below_west": {
+          "scale": ["v.distance", "v.distance", 1]
+        },
+        "below_east": {
+          "scale": ["v.distance", "v.distance", 1]
+        },
+        "below_north": {
+          "scale": [1, "v.distance", "v.distance"]
+        },
+        "below_south": {
+          "scale": [1, "v.distance", "v.distance"]
+        },
+
+        "north_west": {
+          "scale": ["v.distance", 1, "v.distance"]
+        },
+        "south_west": {
+          "scale": ["v.distance", 1, "v.distance"]
+        },
+
+        "north_east": {
+          "scale": ["v.distance", 1, "v.distance"]
+        },
+        "south_east": {
+          "scale": ["v.distance", 1, "v.distance"]
+        }
+      }
+    }
+  }
+}

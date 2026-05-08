@@ -1,0 +1,55 @@
+tile.rc_sd:drawer.name=引き出し
+tile.rc_sd:storage.name=ストレージ
+tile.rc_sd:utility.name=ユーティリティ
+
+need_upgrade.text=アップグレードが必要: %s/%s
+
+ender_drawer=エンダー引き出し
+
+acacia_drawer_1=アカシアの引き出し (1x1)
+birch_drawer_1=シラカバの引き出し (1x1)
+cherry_drawer_1=サクラの引き出し (1x1)
+crimson_drawer_1=真紅の引き出し (1x1)
+dark_oak_drawer_1=ダークオークの引き出し (1x1)
+jungle_drawer_1=ジャングルの引き出し (1x1)
+mangrove_drawer_1=マングローブの引き出し (1x1)
+oak_drawer_1=オークの引き出し (1x1)
+spruce_drawer_1=トウヒの引き出し (1x1)
+warped_drawer_1=歪んだ引き出し (1x1)
+
+acacia_drawer_2=アカシアの引き出し (1x2)
+birch_drawer_2=シラカバの引き出し (1x2)
+cherry_drawer_2=サクラの引き出し (1x2)
+crimson_drawer_2=真紅の引き出し (1x2)
+dark_oak_drawer_2=ダークオークの引き出し (1x2)
+jungle_drawer_2=ジャングルの引き出し (1x2)
+mangrove_drawer_2=マングローブの引き出し (1x2)
+oak_drawer_2=オークの引き出し (1x2)
+spruce_drawer_2=トウヒの引き出し (1x2)
+warped_drawer_2=歪んだ引き出し (1x2)
+
+acacia_drawer_4=アカシアの引き出し (2x2)
+birch_drawer_4=シラカバの引き出し (2x2)
+cherry_drawer_4=サクラの引き出し (2x2)
+crimson_drawer_4=真紅の引き出し (2x2)
+dark_oak_drawer_4=ダークオークの引き出し (2x2)
+jungle_drawer_4=ジャングルの引き出し (2x2)
+mangrove_drawer_4=マングローブの引き出し (2x2)
+oak_drawer_4=オークの引き出し (2x2)
+spruce_drawer_4=トウヒの引き出し (2x2)
+warped_drawer_4=歪んだ引き出し (2x2)
+
+storage_controller=ストレージコントローラー
+
+copper_upgrade=§n銅のアップグレード
+gold_upgrade=§g金のアップグレード
+diamond_upgrade=§sダイヤモンドのアップグレード
+netherite_upgrade=§0ネザライトのアップグレード
+iron_downgrade=§8鉄のダウングレード
+
+void_utility=虚無ユーティリティ
+collector_utility=収集ユーティリティ
+configuration_tool=設定ツール
+linking_tool=リンクツール
+
+rc_sd:itemGroup=機能的なストレージ

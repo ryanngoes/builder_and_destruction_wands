@@ -1,0 +1,55 @@
+tile.rc_sd:drawer.name=Gaveta
+tile.rc_sd:storage.name=Armaz.
+tile.rc_sd:utility.name=Util.
+
+need_upgrade.text=Necessita de Aprimoramento: %s/%s
+
+ender_drawer=Gaveta do Ender
+
+acacia_drawer_1=Gaveta de Acácia (1x1)
+birch_drawer_1=Gaveta de Bétula (1x1)
+cherry_drawer_1=Gaveta de Cerejeira (1x1)
+crimson_drawer_1=Gaveta Carmesim (1x1)
+dark_oak_drawer_1=Gaveta de Carvalho Escuro (1x1)
+jungle_drawer_1=Gaveta da Selva (1x1)
+mangrove_drawer_1=Gaveta de Mangue (1x1)
+oak_drawer_1=Gaveta de Carvalho (1x1)
+spruce_drawer_1=Gaveta de Abeto (1x1)
+warped_drawer_1=Gaveta Distorcida (1x1)
+
+acacia_drawer_2=Gaveta de Acácia (1x2)
+birch_drawer_2=Gaveta de Bétula (1x2)
+cherry_drawer_2=Gaveta de Cerejeira (1x2)
+crimson_drawer_2=Gaveta Carmesim (1x2)
+dark_oak_drawer_2=Gaveta de Carvalho Escuro (1x2)
+jungle_drawer_2=Gaveta da Selva (1x2)
+mangrove_drawer_2=Gaveta de Mangue (1x2)
+oak_drawer_2=Gaveta de Carvalho (1x2)
+spruce_drawer_2=Gaveta de Abeto (1x2)
+warped_drawer_2=Gaveta Distorcida (1x2)
+
+acacia_drawer_4=Gaveta de Acácia (2x2)
+birch_drawer_4=Gaveta de Bétula (2x2)
+cherry_drawer_4=Gaveta de Cerejeira (2x2)
+crimson_drawer_4=Gaveta Carmesim (2x2)
+dark_oak_drawer_4=Gaveta de Carvalho Escuro (2x2)
+jungle_drawer_4=Gaveta da Selva (2x2)
+mangrove_drawer_4=Gaveta de Mangue (2x2)
+oak_drawer_4=Gaveta de Carvalho (2x2)
+spruce_drawer_4=Gaveta de Abeto (2x2)
+warped_drawer_4=Gaveta Distorcida (2x2)
+
+storage_controller=Controlador de Armazenamento
+
+copper_upgrade=§nAprimoramento de Cobre
+gold_upgrade=§gAprimoramento de Ouro
+diamond_upgrade=§sAprimoramento de Diamante
+netherite_upgrade=§0Aprimoramento de Netherita
+iron_downgrade=§8Redutor de Ferro
+
+void_utility=Utilitário de Esvaziamento
+collector_utility=Utilitário de Coleta
+configuration_tool=Ferramenta de Configuração
+linking_tool=Ferramenta de Vinculação
+
+rc_sd:itemGroup=Armazenamento Funcional

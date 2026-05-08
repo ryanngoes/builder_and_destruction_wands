@@ -1,0 +1,223 @@
+{
+  "format_version": "1.8.0",
+  "render_controllers": {
+    "controller.render.rc_sd.number_display_0": {
+      "arrays": {
+        "textures": {
+          "Array.digits": [
+            "Texture.num_0",
+            "Texture.num_1",
+            "Texture.num_2",
+            "Texture.num_3",
+            "Texture.num_4",
+            "Texture.num_5",
+            "Texture.num_6",
+            "Texture.num_7",
+            "Texture.num_8",
+            "Texture.num_9",
+            "Texture.empty"
+          ]
+        }
+      },
+      "part_visibility": [
+        {
+          "root": false,
+          "digit_0": true,
+          "digit_1": false,
+          "digit_2": false,
+          "dot": false,
+          "digit_3": false,
+          "suffix": false
+        }
+      ],
+      "geometry": "Geometry.default",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": ["Array.digits[query.property('rc_sd:digit_0')]"],
+      "filter_lighting": true,
+      "ignore_lighting": true
+    },
+
+    "controller.render.rc_sd.number_display_1": {
+      "arrays": {
+        "textures": {
+          "Array.digits": [
+            "Texture.num_0",
+            "Texture.num_1",
+            "Texture.num_2",
+            "Texture.num_3",
+            "Texture.num_4",
+            "Texture.num_5",
+            "Texture.num_6",
+            "Texture.num_7",
+            "Texture.num_8",
+            "Texture.num_9",
+            "Texture.empty"
+          ]
+        }
+      },
+      "part_visibility": [
+        {
+          "root": false,
+          "digit_0": false,
+          "digit_1": true,
+          "digit_2": false,
+          "dot": false,
+          "digit_3": false,
+          "suffix": false
+        }
+      ],
+      "geometry": "Geometry.default",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": ["Array.digits[query.property('rc_sd:digit_1')]"],
+      "filter_lighting": true,
+      "ignore_lighting": true
+    },
+
+    "controller.render.rc_sd.number_display_2": {
+      "arrays": {
+        "textures": {
+          "Array.digits": [
+            "Texture.num_0",
+            "Texture.num_1",
+            "Texture.num_2",
+            "Texture.num_3",
+            "Texture.num_4",
+            "Texture.num_5",
+            "Texture.num_6",
+            "Texture.num_7",
+            "Texture.num_8",
+            "Texture.num_9",
+            "Texture.empty"
+          ]
+        }
+      },
+      "part_visibility": [
+        {
+          "root": false,
+          "digit_0": false,
+          "digit_1": false,
+          "digit_2": true,
+          "dot": false,
+          "digit_3": false,
+          "suffix": false
+        }
+      ],
+      "geometry": "Geometry.default",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": ["Array.digits[query.property('rc_sd:digit_2')]"],
+      "filter_lighting": true,
+      "ignore_lighting": true
+    },
+
+    "controller.render.rc_sd.number_display_3": {
+      "arrays": {
+        "textures": {
+          "Array.digits": [
+            "Texture.num_0",
+            "Texture.num_1",
+            "Texture.num_2",
+            "Texture.num_3",
+            "Texture.num_4",
+            "Texture.num_5",
+            "Texture.num_6",
+            "Texture.num_7",
+            "Texture.num_8",
+            "Texture.num_9",
+            "Texture.empty"
+          ]
+        }
+      },
+      "part_visibility": [
+        {
+          "root": false,
+          "digit_0": false,
+          "digit_1": false,
+          "digit_2": false,
+          "dot": false,
+          "digit_3": true,
+          "suffix": false
+        }
+      ],
+      "geometry": "Geometry.default",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": ["Array.digits[query.property('rc_sd:digit_3')]"],
+      "filter_lighting": true,
+      "ignore_lighting": true
+    },
+    "controller.render.rc_sd.dot_display": {
+      "arrays": {
+        "textures": {
+          "Array.dot": ["Texture.empty", "Texture.dot"]
+        }
+      },
+      "part_visibility": [
+        {
+          "root": false,
+          "digit_0": false,
+          "digit_1": false,
+          "digit_2": false,
+          "dot": true,
+          "digit_3": false,
+          "suffix": false
+        }
+      ],
+      "geometry": "Geometry.default",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": ["Array.dot[query.property('rc_sd:dot') ? 1 : 0]"],
+      "filter_lighting": true,
+      "ignore_lighting": true
+    },
+    "controller.render.rc_sd.suffix_display": {
+      "arrays": {
+        "textures": {
+          "Array.suffix": [
+            "Texture.empty",
+            "Texture.k",
+            "Texture.m",
+            "Texture.b"
+          ]
+        }
+      },
+      "part_visibility": [
+        {
+          "root": false,
+          "digit_0": false,
+          "digit_1": false,
+          "digit_2": false,
+          "dot": false,
+          "digit_3": false,
+          "suffix": true
+        }
+      ],
+      "geometry": "Geometry.default",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": ["Array.suffix[query.property('rc_sd:suffix')]"],
+      "filter_lighting": true,
+      "ignore_lighting": true
+    }
+  }
+}

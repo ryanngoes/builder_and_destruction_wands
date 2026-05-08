@@ -1,0 +1,43 @@
+{
+    "format_version": 2,
+    "metadata": {
+		"authors": [ "AstraTB" ],
+		"product_type": "addon"
+	},
+    "header": {
+        "name": "pack.name",
+        "description": "pack.description",
+        "uuid": "81ed4ef0-638f-4a04-9d6a-4c76c4c446bc",
+        "pack_scope": "world",
+        "version": [1, 0, 0],
+        "min_engine_version": [1 , 26 , 13]
+    },
+    "modules": [
+        {
+            "type": "data",
+            "uuid": "49d39b41-9a36-4bf0-a8ba-0c3fef9ee06d",
+            "version": [1, 0, 0]
+        },
+        {
+            "type": "script",
+            "language": "javascript",
+            "uuid": "0fcf78e4-4f95-4b60-b0fd-be0d90af15d4",
+            "entry": "scripts/rc_sd/brain.js",
+            "version": [1, 0, 0]
+        }
+    ],
+    "dependencies": [
+        {
+            "module_name": "@minecraft/server",
+            "version": "2.7.0"
+        },
+        {
+            "module_name": "@minecraft/server-ui",
+            "version": "2.0.0"
+        },
+        {
+            "uuid": "bf2e1540-f8eb-4583-9902-402c4d8e9960",
+            "version": [ 1, 0, 0 ]
+        }
+    ]
+}

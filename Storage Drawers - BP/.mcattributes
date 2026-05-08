@@ -1,0 +1,9 @@
+
+diagnostic.disable.resourcepack.models.missing=true
+diagnostic.disable.behaviorpack.block.components.texture_not_found=true
+diagnostic.disable.behaviorpack.block.components.texture_not_found=true
+diagnostic.disable.behaviorpack.item.components.texture_not_found=true
+diagnostic.disable.behaviorpack.item.components.texture_not_found=true
+diagnostic.disable.behaviorpack.entity.event.missing=true
+diagnostic.disable.behaviorpack.loot_tables.missing=true
+diagnostic.disable.behaviorpack.items.missing=true

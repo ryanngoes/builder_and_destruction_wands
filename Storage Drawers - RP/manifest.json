@@ -1,0 +1,29 @@
+{
+  "format_version": 2,
+  "metadata": {
+    "authors": ["AstraTB"],
+    "product_type": "addon"
+  },
+  "header": {
+    "name": "pack.name",
+    "description": "pack.description",
+    "uuid": "bf2e1540-f8eb-4583-9902-402c4d8e9960",
+    "pack_scope": "world",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 26, 13]
+  },
+  "capabilities": ["pbr"],
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "3cc75710-e144-48b8-9ed0-02ae8b3ad65f",
+      "version": [1, 0, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "81ed4ef0-638f-4a04-9d6a-4c76c4c446bc",
+      "version": [1, 0, 0]
+    }
+  ]
+}

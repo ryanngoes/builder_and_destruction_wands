@@ -1,0 +1,19 @@
+{
+  "format_version": "1.26.0",
+  "minecraft:item": {
+    "description": {
+      "identifier": "rc_sd:mangrove_drawer",
+      "menu_category": {
+        "category": "none",
+        "is_hidden_in_commands": true
+      }
+    },
+    "components": {
+      "minecraft:display_name": {
+        "value": "item_ui"
+      },
+      "minecraft:icon": "rc_sd:mangrove_drawer",
+      "minecraft:max_stack_size": 1
+    }
+  }
+}

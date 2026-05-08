@@ -1,0 +1,21 @@
+[
+  {
+    "atlas_tile": "rc_sd:controller_front",
+    "flipbook_texture": "textures/blocks/controller_front",
+    "frames": [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3],
+    "ticks_per_frame": 1,
+    "blend_frames": false
+  },
+  {
+    "atlas_tile": "rc_sd:ender_drawer",
+    "flipbook_texture": "textures/blocks/ender_drawer",
+    "ticks_per_frame": 10,
+    "blend_frames": true
+  },
+  {
+    "atlas_tile": "rc_sd:ender_side",
+    "flipbook_texture": "textures/blocks/ender_side",
+    "ticks_per_frame": 10,
+    "blend_frames": true
+  }
+]

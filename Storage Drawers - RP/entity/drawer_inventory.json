@@ -1,0 +1,27 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "rc_sd:drawer_inventory",
+      "materials": {
+        "default": "entity"
+      },
+      "textures": {
+        "default": "textures/rc/sd/blocks/black"
+      },
+      "geometry": {
+        "default": "geometry.rc_sd.selection"
+      },
+      "animations": {
+        "scale": "animation.rc_sd.selection"
+      },
+      "scripts": {
+        "animate": ["scale"],
+        "pre_animation": [
+          "v.distance = math.pow(query.distance_from_camera / 1.9, 1.6);"
+        ]
+      },
+      "render_controllers": ["controller.render.default"]
+    }
+  }
+}

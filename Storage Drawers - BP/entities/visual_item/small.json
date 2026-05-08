@@ -1,0 +1,91 @@
+{
+  "format_version": "1.20.41",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "rc_sd:small_visual_item",
+      "is_spawnable": false,
+      "is_summonable": true,
+      "properties": {
+        "rc_sd:rotation_y": {
+          "client_sync": true,
+          "type": "float",
+          "default": 0.0,
+          "range": [-180.0, 180.0]
+        },
+        "rc_sd:visual_type": {
+          "client_sync": true,
+          "type": "int",
+          "default": 0,
+          "range": [0, 128]
+        }
+      }
+    },
+    "component_groups": {
+      "rc_sd:despawn": {
+        "minecraft:instant_despawn": {}
+      }
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": ["rc_sd:visual_item"]
+      },
+      "minecraft:inventory": {
+        "additional_slots_per_strength": 0,
+        "can_be_siphoned_from": false,
+        "container_type": "inventory",
+        "inventory_size": 1,
+        "private": false,
+        "restrict_to_owner": false
+      },
+      "minecraft:collision_box": {
+        "height": 0,
+        "width": 0
+      },
+      "minecraft:custom_hit_test": {
+        "hitboxes": [
+          {
+            "width": 0,
+            "height": 0,
+            "pivot": [0, -999, 0]
+          }
+        ]
+      },
+      "minecraft:health": {
+        "value": 1,
+        "max": 1,
+        "min": 1
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "cause": "all",
+            "deals_damage": "no"
+          }
+        ]
+      },
+      "minecraft:scale": {
+        "value": 0.6
+      },
+      "minecraft:inside_block_notifier": {
+        "block_list": [
+          {
+            "block": {
+              "name": "minecraft:air"
+            },
+            "entered_block_event": {
+              "event": "rc_sd:despawn",
+              "target": "self"
+            }
+          }
+        ]
+      }
+    },
+    "events": {
+      "rc_sd:despawn": {
+        "add": {
+          "component_groups": ["rc_sd:despawn"]
+        }
+      }
+    }
+  }
+}

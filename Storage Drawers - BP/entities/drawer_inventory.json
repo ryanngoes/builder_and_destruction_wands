@@ -1,0 +1,199 @@
+{
+  "format_version": "1.26.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "rc_sd:drawer_inventory",
+      "is_summonable": true,
+      "properties": {
+        "rc_sd:selection": {
+          "client_sync": true,
+          "default": false,
+          "type": "bool"
+        },
+        "rc_sd:is_hidden": {
+          "client_sync": true,
+          "default": false,
+          "type": "bool"
+        }
+      }
+    },
+    "component_groups": {
+      "despawn": {
+        "minecraft:instant_despawn": {}
+      },
+      "block_collision": {
+        "minecraft:collision_box": {
+          "height": 1,
+          "width": 1
+        }
+      },
+      "empty_collision": {
+        "minecraft:collision_box": {
+          "height": 0,
+          "width": 0
+        }
+      }
+    },
+    "components": {
+      "minecraft:timer": {
+        "time": 0,
+        "looping": true,
+        "time_down_event": {
+          "event": "rc_sd:reset_selection",
+          "target": "self"
+        }
+      },
+      "minecraft:is_hidden_when_invisible": {},
+      "minecraft:inside_block_notifier": {
+        "block_list": [
+          {
+            "block": {
+              "name": "rc_sd:oak_drawer_1x1"
+            },
+            "exited_block_event": {
+              "event": "rc_sd:despawn",
+              "target": "self"
+            }
+          }
+        ]
+      },
+      "minecraft:nameable": {
+        "allow_name_tag_renaming": false,
+        "always_show": false
+      },
+      "minecraft:inventory": {
+        "container_type": "container",
+        "inventory_size": 27
+      },
+      "minecraft:persistent": {},
+      "minecraft:tick_world": {},
+      "minecraft:renders_when_invisible": {},
+      "minecraft:type_family": {
+        "family": ["inanimate", "chest", "rc_sd:chest"]
+      },
+      "minecraft:spell_effects": {
+        "add_effects": [
+          {
+            "effect": "invisibility",
+            "duration": "infinite",
+            "visible": false,
+            "ambient": false,
+            "amplifier": 0
+          }
+        ]
+      },
+      "minecraft:mob_effect_immunity": {
+        "mob_effects": [
+          "absorption",
+          "bad_omen",
+          "blindness",
+          "conduit_power",
+          "darkness",
+          "fatal_poison",
+          "fire_resistance",
+          "haste",
+          "health_boost",
+          "hunger",
+          "infested",
+          "instant_damage",
+          "instant_health",
+          "jump_boost",
+          "levitation",
+          "mining_fatigue",
+          "nausea",
+          "night_vision",
+          "oozing",
+          "poison",
+          "raid_omen",
+          "regeneration",
+          "resistance",
+          "saturation",
+          "slow_falling",
+          "slowness",
+          "speed",
+          "strength",
+          "trial_omen",
+          "village_hero",
+          "water_breathing",
+          "weakness",
+          "weaving",
+          "wind_charged",
+          "wither"
+        ]
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "cause": "all",
+            "deals_damage": "no"
+          }
+        ]
+      },
+      "minecraft:health": {
+        "value": 1,
+        "max": 1,
+        "min": 1
+      },
+      "minecraft:knockback_resistance": {
+        "value": 1,
+        "max": 1,
+        "min": 1
+      },
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": false
+      }
+    },
+    "events": {
+      "minecraft:entity_spawned": {
+        "add": {
+          "component_groups": ["empty_collision"]
+        }
+      },
+      "rc_sd:reset_selection": {
+        "queue_command": {
+          "command": ["tag @s add rc_sd:validation"]
+        },
+        "filters": [
+          {
+            "all_of": [
+              {
+                "subject": "self",
+                "test": "has_tag",
+                "value": "rc_sd:validation",
+                "operator": "!="
+              }
+            ]
+          }
+        ]
+      },
+      "rc_sd:set_block_collision": {
+        "set_property": {
+          "rc_sd:is_hidden": false
+        },
+        "add": {
+          "component_groups": ["block_collision"]
+        },
+        "remove": {
+          "component_groups": ["empty_collision"]
+        }
+      },
+      "rc_sd:remove_collision": {
+        "set_property": {
+          "rc_sd:is_hidden": true
+        },
+        "add": {
+          "component_groups": ["empty_collision"]
+        },
+        "remove": {
+          "component_groups": ["block_collision"]
+        }
+      },
+      "rc_sd:despawn": {
+        "add": {
+          "component_groups": ["despawn"]
+        }
+      }
+    }
+  }
+}

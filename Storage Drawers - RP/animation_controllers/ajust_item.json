@@ -1,0 +1,120 @@
+{
+  "format_version": "1.20.41",
+  "animation_controllers": {
+    "controller.animation.rc_sd.ajust_item": {
+      "states": {
+        "default": {
+          "transitions": [
+            {
+              "ajust_normal": "q.property('rc_sd:visual_type') == 0"
+            },
+            {
+              "ajust_block": "q.property('rc_sd:visual_type') == 1"
+            },
+            {
+              "ajust_weapon": "q.property('rc_sd:visual_type') == 2"
+            },
+            {
+              "ajust_misc": "q.property('rc_sd:visual_type') == 3"
+            },
+            {
+              "ajust_small": "q.property('rc_sd:visual_type') == 4"
+            },
+            {
+              "ajust_beacon": "q.property('rc_sd:visual_type') == 5"
+            },
+            {
+              "ajust_anvil": "q.property('rc_sd:visual_type') == 6"
+            },
+            {
+              "ajust_chest": "q.property('rc_sd:visual_type') == 7"
+            },
+            {
+              "ajust_heavy": "q.property('rc_sd:visual_type') == 8"
+            },
+            {
+              "ajust_fence": "q.property('rc_sd:visual_type') == 9"
+            },
+            {
+              "ajust_rod": "q.property('rc_sd:visual_type') == 10"
+            },
+            {
+              "ajust_dripstone": "q.property('rc_sd:visual_type') == 11"
+            },
+            {
+              "ajust_ssb": "q.property('rc_sd:visual_type') == 12"
+            },
+
+            {
+              "ajust_layer": "q.property('rc_sd:visual_type') == 128"
+            }
+          ]
+        },
+        "ajust_normal": {
+          "animations": ["ajust_normal"],
+          "transitions": [{ "default": "q.property('rc_sd:visual_type') != 0" }]
+        },
+        "ajust_block": {
+          "animations": ["ajust_block"],
+          "transitions": [{ "default": "q.property('rc_sd:visual_type') != 1" }]
+        },
+        "ajust_weapon": {
+          "animations": ["ajust_weapon"],
+          "transitions": [{ "default": "q.property('rc_sd:visual_type') != 2" }]
+        },
+        "ajust_misc": {
+          "animations": ["ajust_misc"],
+          "transitions": [{ "default": "q.property('rc_sd:visual_type') != 3" }]
+        },
+        "ajust_small": {
+          "animations": ["ajust_small"],
+          "transitions": [{ "default": "q.property('rc_sd:visual_type') != 4" }]
+        },
+        "ajust_beacon": {
+          "animations": ["ajust_beacon"],
+          "transitions": [{ "default": "q.property('rc_sd:visual_type') != 5" }]
+        },
+        "ajust_anvil": {
+          "animations": ["ajust_anvil"],
+          "transitions": [{ "default": "q.property('rc_sd:visual_type') != 6" }]
+        },
+        "ajust_chest": {
+          "animations": ["ajust_chest"],
+          "transitions": [{ "default": "q.property('rc_sd:visual_type') != 7" }]
+        },
+        "ajust_heavy": {
+          "animations": ["ajust_heavy"],
+          "transitions": [{ "default": "q.property('rc_sd:visual_type') != 8" }]
+        },
+        "ajust_fence": {
+          "animations": ["ajust_fence"],
+          "transitions": [{ "default": "q.property('rc_sd:visual_type') != 9" }]
+        },
+        "ajust_rod": {
+          "animations": ["ajust_rod"],
+          "transitions": [
+            { "default": "q.property('rc_sd:visual_type') != 10" }
+          ]
+        },
+        "ajust_dripstone": {
+          "animations": ["ajust_dripstone"],
+          "transitions": [
+            { "default": "q.property('rc_sd:visual_type') != 11" }
+          ]
+        },
+        "ajust_ssb": {
+          "animations": ["ajust_ssb"],
+          "transitions": [
+            { "default": "q.property('rc_sd:visual_type') != 12" }
+          ]
+        },
+        "ajust_layer": {
+          "animations": ["ajust_layer"],
+          "transitions": [
+            { "default": "q.property('rc_sd:visual_type') != 128" }
+          ]
+        }
+      }
+    }
+  }
+}

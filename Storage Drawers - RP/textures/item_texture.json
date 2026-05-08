@@ -1,0 +1,99 @@
+{
+  "resource_pack_name": "vatonage",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "rc_sd:air": {
+      "textures": "textures/rc/sd/blocks/air"
+    },
+    "rc_sd:acacia_drawer": {
+      "textures": "textures/rc/sd/blocks/acacia_drawer"
+    },
+    "rc_sd:acacia_drawer2": {
+      "textures": "textures/rc/sd/blocks/acacia_drawer2"
+    },
+    "rc_sd:acacia_drawer4": {
+      "textures": "textures/rc/sd/blocks/acacia_drawer4"
+    },
+    "rc_sd:birch_drawer": {
+      "textures": "textures/rc/sd/blocks/birch_drawer"
+    },
+    "rc_sd:birch_drawer2": {
+      "textures": "textures/rc/sd/blocks/birch_drawer2"
+    },
+    "rc_sd:birch_drawer4": {
+      "textures": "textures/rc/sd/blocks/birch_drawer4"
+    },
+    "rc_sd:cherry_drawer": {
+      "textures": "textures/rc/sd/blocks/cherry_drawer"
+    },
+    "rc_sd:cherry_drawer2": {
+      "textures": "textures/rc/sd/blocks/cherry_drawer2"
+    },
+    "rc_sd:cherry_drawer4": {
+      "textures": "textures/rc/sd/blocks/cherry_drawer4"
+    },
+    "rc_sd:crimson_drawer": {
+      "textures": "textures/rc/sd/blocks/crimson_drawer"
+    },
+    "rc_sd:crimson_drawer2": {
+      "textures": "textures/rc/sd/blocks/crimson_drawer2"
+    },
+    "rc_sd:crimson_drawer4": {
+      "textures": "textures/rc/sd/blocks/crimson_drawer4"
+    },
+    "rc_sd:dark_oak_drawer": {
+      "textures": "textures/rc/sd/blocks/dark_oak_drawer"
+    },
+    "rc_sd:dark_oak_drawer2": {
+      "textures": "textures/rc/sd/blocks/dark_oak_drawer2"
+    },
+    "rc_sd:dark_oak_drawer4": {
+      "textures": "textures/rc/sd/blocks/dark_oak_drawer4"
+    },
+    "rc_sd:jungle_drawer": {
+      "textures": "textures/rc/sd/blocks/jungle_drawer"
+    },
+    "rc_sd:jungle_drawer2": {
+      "textures": "textures/rc/sd/blocks/jungle_drawer2"
+    },
+    "rc_sd:jungle_drawer4": {
+      "textures": "textures/rc/sd/blocks/jungle_drawer4"
+    },
+    "rc_sd:mangrove_drawer": {
+      "textures": "textures/rc/sd/blocks/mangrove_drawer"
+    },
+    "rc_sd:mangrove_drawer2": {
+      "textures": "textures/rc/sd/blocks/mangrove_drawer2"
+    },
+    "rc_sd:mangrove_drawer4": {
+      "textures": "textures/rc/sd/blocks/mangrove_drawer4"
+    },
+    "rc_sd:oak_drawer": {
+      "textures": "textures/rc/sd/blocks/oak_drawer"
+    },
+    "rc_sd:oak_drawer2": {
+      "textures": "textures/rc/sd/blocks/oak_drawer2"
+    },
+    "rc_sd:oak_drawer4": {
+      "textures": "textures/rc/sd/blocks/oak_drawer4"
+    },
+    "rc_sd:spruce_drawer": {
+      "textures": "textures/rc/sd/blocks/spruce_drawer"
+    },
+    "rc_sd:spruce_drawer2": {
+      "textures": "textures/rc/sd/blocks/spruce_drawer2"
+    },
+    "rc_sd:spruce_drawer4": {
+      "textures": "textures/rc/sd/blocks/spruce_drawer4"
+    },
+    "rc_sd:warped_drawer": {
+      "textures": "textures/rc/sd/blocks/warped_drawer"
+    },
+    "rc_sd:warped_drawer2": {
+      "textures": "textures/rc/sd/blocks/warped_drawer2"
+    },
+    "rc_sd:warped_drawer4": {
+      "textures": "textures/rc/sd/blocks/warped_drawer4"
+    }
+  }
+}

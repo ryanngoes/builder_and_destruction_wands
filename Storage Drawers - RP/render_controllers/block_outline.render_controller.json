@@ -1,0 +1,51 @@
+{
+	"format_version": "1.8.0",
+	"render_controllers": {
+		"controller.render.block_outline": {
+			"part_visibility": [
+				{
+					"root": false
+				}
+			],
+			"geometry": "Geometry.default",
+			"materials": [
+				{
+					"*": "Material.default"
+				}
+			],
+			"textures": [
+				"Texture.default"
+			],
+			"is_hurt_color": {
+				"a": 0
+			},
+			"on_fire_color": {
+				"a": 0
+			},
+			"ignore_lighting": true
+		},
+		"controller.render.block_outline.invisible": {
+			"part_visibility": [
+				{
+					"outline": false
+				}
+			],
+			"geometry": "Geometry.default",
+			"materials": [
+				{
+					"*": "Material.invisible"
+				}
+			],
+			"textures": [
+				"Texture.default"
+			],
+			"is_hurt_color": {
+				"a": 0
+			},
+			"on_fire_color": {
+				"a": 0
+			},
+			"ignore_lighting": true
+		}
+	}
+}

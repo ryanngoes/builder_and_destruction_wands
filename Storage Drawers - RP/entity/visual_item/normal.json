@@ -1,0 +1,64 @@
+{
+  "format_version": "1.20.41",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "rc_sd:normal_visual_item",
+      "materials": {
+        "default": "entity_custom"
+      },
+      "textures": {
+        "default": "textures/rc/sd/blocks/air",
+
+        "empty": "textures/rc/sd/blocks/air",
+        "num_0": "textures/rc/sd/display/0",
+        "num_1": "textures/rc/sd/display/1",
+        "num_2": "textures/rc/sd/display/2",
+        "num_3": "textures/rc/sd/display/3",
+        "num_4": "textures/rc/sd/display/4",
+        "num_5": "textures/rc/sd/display/5",
+        "num_6": "textures/rc/sd/display/6",
+        "num_7": "textures/rc/sd/display/7",
+        "num_8": "textures/rc/sd/display/8",
+        "num_9": "textures/rc/sd/display/9",
+        "dot": "textures/rc/sd/display/dot",
+        "k": "textures/rc/sd/display/k",
+        "m": "textures/rc/sd/display/m",
+        "b": "textures/rc/sd/display/b"
+      },
+      "geometry": {
+        "default": "geometry.rc_sd.visual_item"
+      },
+      "animations": {
+        "adjust_display": "animation.rc_sd.adjust_display",
+        "rotation": "animation.rc_sd.storage_drawer.rotation",
+        "adjust_item": "controller.animation.rc_sd.ajust_item",
+        "ajust_normal": "animation.rc_sd.item_ajust_normal",
+        "ajust_block": "animation.rc_sd.item_ajust_block",
+        "ajust_weapon": "animation.rc_sd.item_ajust_weapon",
+        "ajust_misc": "animation.rc_sd.item_ajust_misc",
+        "ajust_small": "animation.rc_sd.item_ajust_small",
+        "ajust_beacon": "animation.rc_sd.item_ajust_beacon",
+        "ajust_anvil": "animation.rc_sd.item_ajust_anvil",
+        "ajust_chest": "animation.rc_sd.item_ajust_chest",
+        "ajust_heavy": "animation.rc_sd.item_ajust_heavy",
+        "ajust_fence": "animation.rc_sd.item_ajust_fence",
+        "ajust_rod": "animation.rc_sd.item_ajust_rod",
+        "ajust_dripstone": "animation.rc_sd.item_ajust_dripstone",
+        "ajust_ssb": "animation.rc_sd.item_ajust_ssb",
+        "ajust_layer": "animation.rc_sd.item_ajust_block_layer"
+      },
+      "scripts": {
+        "animate": ["adjust_display", "adjust_item", "rotation"]
+      },
+      "render_controllers": [
+        "controller.render.rc_sd.number_display_0",
+        "controller.render.rc_sd.number_display_1",
+        "controller.render.rc_sd.number_display_2",
+        "controller.render.rc_sd.number_display_3",
+
+        "controller.render.rc_sd.dot_display",
+        "controller.render.rc_sd.suffix_display"
+      ]
+    }
+  }
+}
