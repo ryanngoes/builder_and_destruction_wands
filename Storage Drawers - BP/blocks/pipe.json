@@ -1,0 +1,899 @@
+{
+  "format_version": "1.26.10",
+  "minecraft:block": {
+    "description": {
+      "identifier": "rc_sd:pipe",
+      "menu_category": {
+        "category": "items"
+      },
+      "states": {
+        "rc_sd:active": [false, true],
+        "rc_sd:above": ["false", "true", "pull"],
+        "rc_sd:below": ["false", "true", "pull"],
+        "rc_sd:north": ["false", "true", "pull"],
+        "rc_sd:south": ["false", "true", "pull"],
+        "rc_sd:east": ["false", "true", "pull"],
+        "rc_sd:west": ["false", "true", "pull"]
+      }
+    },
+    "components": {
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "rc_sd:pipe",
+          "render_method": "alpha_test_single_sided"
+        }
+      },
+      "minecraft:collision_box": {
+        "origin": [-4, 4, -4],
+        "size": [8, 8, 8]
+      },
+      "minecraft:selection_box": {
+        "origin": [-4, 4, -4],
+        "size": [8, 8, 8]
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 1
+      },
+      "minecraft:tick": {
+        "interval_range": [18, 25],
+        "looping": true
+      },
+      "minecraft:flammable": false,
+      "minecraft:light_dampening": 0,
+      "tag:minecraft:is_pickaxe_item_destructible": {},
+      "minecraft:geometry": {
+        "identifier": "geometry.rc_sd.glass_pipe",
+        "bone_visibility": {
+          "center_above": "q.block_state('rc_sd:above') == 'false' && !(((q.block_state('rc_sd:north') == 'true' || q.block_state('rc_sd:north') == 'pull') && (q.block_state('rc_sd:south') == 'true' || q.block_state('rc_sd:south') == 'pull') && q.block_state('rc_sd:above') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false') || ((q.block_state('rc_sd:east') == 'true' || q.block_state('rc_sd:east') == 'pull') && (q.block_state('rc_sd:west') == 'true' || q.block_state('rc_sd:west') == 'pull') && q.block_state('rc_sd:above') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false') || ((q.block_state('rc_sd:above') == 'true' || q.block_state('rc_sd:above') == 'pull') && (q.block_state('rc_sd:below') == 'true' || q.block_state('rc_sd:below') == 'pull') && q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false'))",
+          "center_below": "q.block_state('rc_sd:below') == 'false' && !(((q.block_state('rc_sd:north') == 'true' || q.block_state('rc_sd:north') == 'pull') && (q.block_state('rc_sd:south') == 'true' || q.block_state('rc_sd:south') == 'pull') && q.block_state('rc_sd:above') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false') || ((q.block_state('rc_sd:east') == 'true' || q.block_state('rc_sd:east') == 'pull') && (q.block_state('rc_sd:west') == 'true' || q.block_state('rc_sd:west') == 'pull') && q.block_state('rc_sd:above') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false') || ((q.block_state('rc_sd:above') == 'true' || q.block_state('rc_sd:above') == 'pull') && (q.block_state('rc_sd:below') == 'true' || q.block_state('rc_sd:below') == 'pull') && q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false'))",
+          "center_north": "q.block_state('rc_sd:north') == 'false' && !(((q.block_state('rc_sd:north') == 'true' || q.block_state('rc_sd:north') == 'pull') && (q.block_state('rc_sd:south') == 'true' || q.block_state('rc_sd:south') == 'pull') && q.block_state('rc_sd:above') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false') || ((q.block_state('rc_sd:east') == 'true' || q.block_state('rc_sd:east') == 'pull') && (q.block_state('rc_sd:west') == 'true' || q.block_state('rc_sd:west') == 'pull') && q.block_state('rc_sd:above') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false') || ((q.block_state('rc_sd:above') == 'true' || q.block_state('rc_sd:above') == 'pull') && (q.block_state('rc_sd:below') == 'true' || q.block_state('rc_sd:below') == 'pull') && q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false'))",
+          "center_south": "q.block_state('rc_sd:south') == 'false' && !(((q.block_state('rc_sd:north') == 'true' || q.block_state('rc_sd:north') == 'pull') && (q.block_state('rc_sd:south') == 'true' || q.block_state('rc_sd:south') == 'pull') && q.block_state('rc_sd:above') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false') || ((q.block_state('rc_sd:east') == 'true' || q.block_state('rc_sd:east') == 'pull') && (q.block_state('rc_sd:west') == 'true' || q.block_state('rc_sd:west') == 'pull') && q.block_state('rc_sd:above') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false') || ((q.block_state('rc_sd:above') == 'true' || q.block_state('rc_sd:above') == 'pull') && (q.block_state('rc_sd:below') == 'true' || q.block_state('rc_sd:below') == 'pull') && q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false'))",
+          "center_east": "q.block_state('rc_sd:east') == 'false' && !(((q.block_state('rc_sd:north') == 'true' || q.block_state('rc_sd:north') == 'pull') && (q.block_state('rc_sd:south') == 'true' || q.block_state('rc_sd:south') == 'pull') && q.block_state('rc_sd:above') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false') || ((q.block_state('rc_sd:east') == 'true' || q.block_state('rc_sd:east') == 'pull') && (q.block_state('rc_sd:west') == 'true' || q.block_state('rc_sd:west') == 'pull') && q.block_state('rc_sd:above') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false') || ((q.block_state('rc_sd:above') == 'true' || q.block_state('rc_sd:above') == 'pull') && (q.block_state('rc_sd:below') == 'true' || q.block_state('rc_sd:below') == 'pull') && q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false'))",
+          "center_west": "q.block_state('rc_sd:west') == 'false' && !(((q.block_state('rc_sd:north') == 'true' || q.block_state('rc_sd:north') == 'pull') && (q.block_state('rc_sd:south') == 'true' || q.block_state('rc_sd:south') == 'pull') && q.block_state('rc_sd:above') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false') || ((q.block_state('rc_sd:east') == 'true' || q.block_state('rc_sd:east') == 'pull') && (q.block_state('rc_sd:west') == 'true' || q.block_state('rc_sd:west') == 'pull') && q.block_state('rc_sd:above') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false') || ((q.block_state('rc_sd:above') == 'true' || q.block_state('rc_sd:above') == 'pull') && (q.block_state('rc_sd:below') == 'true' || q.block_state('rc_sd:below') == 'pull') && q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false'))",
+
+          
+
+          "north": "q.block_state('rc_sd:north') == 'true' || q.block_state('rc_sd:north') == 'pull'",
+          "north_pull": "q.block_state('rc_sd:north') == 'pull'",
+          "south": "q.block_state('rc_sd:south') == 'true' || q.block_state('rc_sd:south') == 'pull'",
+          "south_pull": "q.block_state('rc_sd:south') == 'pull'",
+          "east": "q.block_state('rc_sd:east') == 'true' || q.block_state('rc_sd:east') == 'pull'",
+          "east_pull": "q.block_state('rc_sd:east') == 'pull'",
+          "west": "q.block_state('rc_sd:west') == 'true' || q.block_state('rc_sd:west') == 'pull'",
+          "west_pull": "q.block_state('rc_sd:west') == 'pull'",
+          "above": "q.block_state('rc_sd:above') == 'true' || q.block_state('rc_sd:above') == 'pull'",
+          "above_pull": "q.block_state('rc_sd:above') == 'pull'",
+          "below": "q.block_state('rc_sd:below') == 'true' || q.block_state('rc_sd:below') == 'pull'",
+          "below_pull": "q.block_state('rc_sd:below') == 'pull'",
+
+          "north_south": "(q.block_state('rc_sd:south') == 'true' || q.block_state('rc_sd:south') == 'pull') && (q.block_state('rc_sd:north') == 'true' || q.block_state('rc_sd:north') == 'pull') && (q.block_state('rc_sd:above') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false')",
+          "east_west": "(q.block_state('rc_sd:east') == 'true' || q.block_state('rc_sd:east') == 'pull') && (q.block_state('rc_sd:west') == 'true' || q.block_state('rc_sd:west') == 'pull') && (q.block_state('rc_sd:above') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false')",
+          "above_below": "(q.block_state('rc_sd:above') == 'true' || q.block_state('rc_sd:above') == 'pull') && (q.block_state('rc_sd:below') == 'true' || q.block_state('rc_sd:below') == 'pull') && (q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false')"
+        }
+      },
+      "rc_sd:pipe": {},
+      "minecraft:destructible_by_explosion": true
+    },
+    "permutations": [
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 4, -8],
+            "size": [8, 8, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 4, -8],
+            "size": [8, 8, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 4, -4],
+            "size": [8, 8, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 4, -4],
+            "size": [8, 8, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 4, -8],
+            "size": [8, 8, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 4, -8],
+            "size": [8, 8, 16]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -4],
+            "size": [12, 8, 8]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -4],
+            "size": [12, 8, 8]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -8],
+            "size": [12, 8, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -8],
+            "size": [12, 8, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -4],
+            "size": [12, 8, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -4],
+            "size": [12, 8, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -8],
+            "size": [12, 8, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -8],
+            "size": [12, 8, 16]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 4, -4],
+            "size": [12, 8, 8]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 4, -4],
+            "size": [12, 8, 8]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 4, -8],
+            "size": [12, 8, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 4, -8],
+            "size": [12, 8, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 4, -4],
+            "size": [12, 8, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 4, -4],
+            "size": [12, 8, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 4, -8],
+            "size": [12, 8, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 4, -8],
+            "size": [12, 8, 16]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -4],
+            "size": [16, 8, 8]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -4],
+            "size": [16, 8, 8]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -8],
+            "size": [16, 8, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -8],
+            "size": [16, 8, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -4],
+            "size": [16, 8, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -4],
+            "size": [16, 8, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -8],
+            "size": [16, 8, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -8],
+            "size": [16, 8, 16]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -4],
+            "size": [8, 12, 8]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -4],
+            "size": [8, 12, 8]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -8],
+            "size": [8, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -8],
+            "size": [8, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -4],
+            "size": [8, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -4],
+            "size": [8, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -8],
+            "size": [8, 12, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -8],
+            "size": [8, 12, 16]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -4],
+            "size": [12, 12, 8]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -4],
+            "size": [12, 12, 8]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -8],
+            "size": [12, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -8],
+            "size": [12, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -4],
+            "size": [12, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -4],
+            "size": [12, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -8],
+            "size": [12, 12, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -8],
+            "size": [12, 12, 16]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -4],
+            "size": [12, 12, 8]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -4],
+            "size": [12, 12, 8]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -8],
+            "size": [12, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -8],
+            "size": [12, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -4],
+            "size": [12, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -4],
+            "size": [12, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -8],
+            "size": [12, 12, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -8],
+            "size": [12, 12, 16]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -4],
+            "size": [16, 12, 8]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -4],
+            "size": [16, 12, 8]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -8],
+            "size": [16, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -8],
+            "size": [16, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -4],
+            "size": [16, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -4],
+            "size": [16, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') == 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -8],
+            "size": [16, 12, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -8],
+            "size": [16, 12, 16]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 4, -4],
+            "size": [8, 12, 8]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 4, -4],
+            "size": [8, 12, 8]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 4, -8],
+            "size": [8, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 4, -8],
+            "size": [8, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 4, -4],
+            "size": [8, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 4, -4],
+            "size": [8, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 4, -8],
+            "size": [8, 12, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 4, -8],
+            "size": [8, 12, 16]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -4],
+            "size": [12, 12, 8]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -4],
+            "size": [12, 12, 8]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -8],
+            "size": [12, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -8],
+            "size": [12, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -4],
+            "size": [12, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -4],
+            "size": [12, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -8],
+            "size": [12, 12, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -8],
+            "size": [12, 12, 16]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 4, -4],
+            "size": [12, 12, 8]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 4, -4],
+            "size": [12, 12, 8]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 4, -8],
+            "size": [12, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 4, -8],
+            "size": [12, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 4, -4],
+            "size": [12, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 4, -4],
+            "size": [12, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 4, -8],
+            "size": [12, 12, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 4, -8],
+            "size": [12, 12, 16]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -4],
+            "size": [16, 12, 8]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -4],
+            "size": [16, 12, 8]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -8],
+            "size": [16, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -8],
+            "size": [16, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -4],
+            "size": [16, 12, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -4],
+            "size": [16, 12, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') == 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 4, -8],
+            "size": [16, 12, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 4, -8],
+            "size": [16, 12, 16]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -4],
+            "size": [8, 16, 8]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -4],
+            "size": [8, 16, 8]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -8],
+            "size": [8, 16, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -8],
+            "size": [8, 16, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -4],
+            "size": [8, 16, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -4],
+            "size": [8, 16, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -8],
+            "size": [8, 16, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -8],
+            "size": [8, 16, 16]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -4],
+            "size": [12, 16, 8]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -4],
+            "size": [12, 16, 8]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -8],
+            "size": [12, 16, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -8],
+            "size": [12, 16, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -4],
+            "size": [12, 16, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -4],
+            "size": [12, 16, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') == 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -8],
+            "size": [12, 16, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -8],
+            "size": [12, 16, 16]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -4],
+            "size": [12, 16, 8]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -4],
+            "size": [12, 16, 8]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -8],
+            "size": [12, 16, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -8],
+            "size": [12, 16, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -4],
+            "size": [12, 16, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -4],
+            "size": [12, 16, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') == 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-4, 0, -8],
+            "size": [12, 16, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-4, 0, -8],
+            "size": [12, 16, 16]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -4],
+            "size": [16, 16, 8]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -4],
+            "size": [16, 16, 8]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') == 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -8],
+            "size": [16, 16, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -8],
+            "size": [16, 16, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') == 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -4],
+            "size": [16, 16, 12]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -4],
+            "size": [16, 16, 12]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('rc_sd:north') != 'false' && q.block_state('rc_sd:south') != 'false' && q.block_state('rc_sd:east') != 'false' && q.block_state('rc_sd:west') != 'false' && q.block_state('rc_sd:below') != 'false' && q.block_state('rc_sd:above') != 'false'",
+        "components": {
+          "minecraft:collision_box": {
+            "origin": [-8, 0, -8],
+            "size": [16, 16, 16]
+          },
+          "minecraft:selection_box": {
+            "origin": [-8, 0, -8],
+            "size": [16, 16, 16]
+          }
+        }
+      }
+    ]
+  }
+}

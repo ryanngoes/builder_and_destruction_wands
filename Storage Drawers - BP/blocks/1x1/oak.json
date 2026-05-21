@@ -27,7 +27,45 @@
         "amount_per_slot": 2048
       },
       "minecraft:destructible_by_mining": {
-        "seconds_to_destroy": 4
+        "seconds_to_destroy": 3,
+        "item_specific_speeds": [
+          {
+            "item": {
+              "tags": "q.all_tags('minecraft:is_axe', 'minecraft:wooden_tier')"
+            },
+            "destroy_speed": 2.75
+          },
+          {
+            "item": {
+              "tags": "q.all_tags('minecraft:is_axe', 'minecraft:stone_tier')"
+            },
+            "destroy_speed": 2.5
+          },
+          {
+            "item": {
+              "tags": "q.all_tags('minecraft:is_axe', 'minecraft:iron_tier')"
+            },
+            "destroy_speed": 2.4
+          },
+          {
+            "item": {
+              "tags": "q.all_tags('minecraft:is_axe', 'minecraft:golden_tier')"
+            },
+            "destroy_speed": 2.25
+          },
+          {
+            "item": {
+              "tags": "q.all_tags('minecraft:is_axe', 'minecraft:diamond_tier')"
+            },
+            "destroy_speed": 2.4
+          },
+          {
+            "item": {
+              "tags": "q.all_tags('minecraft:is_axe', 'minecraft:netherite_tier')"
+            },
+            "destroy_speed": 2.35
+          }
+        ]
       },
       "tag:minecraft:is_axe_item_destructible": {},
       "minecraft:geometry": {
@@ -43,7 +81,7 @@
           "render_method": "opaque"
         },
         "front": {
-          "texture": "rc_sd:oak_drawer_front_1x1",
+          "texture": "rc_sd:oak_drawer",
           "render_method": "opaque"
         },
         "top": {

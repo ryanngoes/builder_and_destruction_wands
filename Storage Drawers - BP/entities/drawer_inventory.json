@@ -36,7 +36,7 @@
     },
     "components": {
       "minecraft:timer": {
-        "time": 0,
+        "time": 0.1,
         "looping": true,
         "time_down_event": {
           "event": "rc_sd:reset_selection",
@@ -48,9 +48,9 @@
         "block_list": [
           {
             "block": {
-              "name": "rc_sd:oak_drawer_1x1"
+              "name": "minecraft:air"
             },
-            "exited_block_event": {
+            "entered_block_event": {
               "event": "rc_sd:despawn",
               "target": "self"
             }

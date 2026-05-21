@@ -33,13 +33,6 @@
               }
             },
             {
-              "screen@common.compact_close_button": {
-                "offset": ["75.5px", 2],
-                "anchor_from": "top_middle",
-                "anchor_to": "top_middle"
-              }
-            },
-            {
               "chest_panel": {
                 "type": "panel",
                 "layer": 5,
@@ -81,7 +74,7 @@
         "array_name": "variables",
         "operation": "insert_back",
         "value": {
-          "requires": "($new_container_title = 'tile.rc_sd:oak_drawer_1x1.name')",
+          "requires": "($new_container_title = 'tile.rc_sd:acacia_drawer_1x1.name') or ($new_container_title = 'tile.rc_sd:acacia_drawer_1x2.name') or ($new_container_title = 'tile.rc_sd:acacia_drawer_2x2.name') or ($new_container_title = 'tile.rc_sd:bamboo_drawer_1x1.name') or ($new_container_title = 'tile.rc_sd:bamboo_drawer_1x2.name') or ($new_container_title = 'tile.rc_sd:bamboo_drawer_2x2.name') or ($new_container_title = 'tile.rc_sd:birch_drawer_1x1.name') or ($new_container_title = 'tile.rc_sd:birch_drawer_1x2.name') or ($new_container_title = 'tile.rc_sd:birch_drawer_2x2.name') or ($new_container_title = 'tile.rc_sd:cherry_drawer_1x1.name') or ($new_container_title = 'tile.rc_sd:cherry_drawer_1x2.name') or ($new_container_title = 'tile.rc_sd:cherry_drawer_2x2.name') or ($new_container_title = 'tile.rc_sd:crimson_drawer_1x1.name') or ($new_container_title = 'tile.rc_sd:crimson_drawer_1x2.name') or ($new_container_title = 'tile.rc_sd:crimson_drawer_2x2.name') or ($new_container_title = 'tile.rc_sd:dark_oak_drawer_1x1.name') or ($new_container_title = 'tile.rc_sd:dark_oak_drawer_1x2.name') or ($new_container_title = 'tile.rc_sd:dark_oak_drawer_2x2.name') or ($new_container_title = 'tile.rc_sd:jungle_drawer_1x1.name') or ($new_container_title = 'tile.rc_sd:jungle_drawer_1x2.name') or ($new_container_title = 'tile.rc_sd:jungle_drawer_2x2.name') or ($new_container_title = 'tile.rc_sd:mangrove_drawer_1x1.name') or ($new_container_title = 'tile.rc_sd:mangrove_drawer_1x2.name') or ($new_container_title = 'tile.rc_sd:mangrove_drawer_2x2.name') or ($new_container_title = 'tile.rc_sd:oak_drawer_1x1.name') or ($new_container_title = 'tile.rc_sd:oak_drawer_1x2.name') or ($new_container_title = 'tile.rc_sd:oak_drawer_2x2.name') or ($new_container_title = 'tile.rc_sd:pale_oak_drawer_1x1.name') or ($new_container_title = 'tile.rc_sd:pale_oak_drawer_1x2.name') or ($new_container_title = 'tile.rc_sd:pale_oak_drawer_2x2.name') or ($new_container_title = 'tile.rc_sd:spruce_drawer_1x1.name') or ($new_container_title = 'tile.rc_sd:spruce_drawer_1x2.name') or ($new_container_title = 'tile.rc_sd:spruce_drawer_2x2.name') or ($new_container_title = 'tile.rc_sd:warped_drawer_1x1.name') or ($new_container_title = 'tile.rc_sd:warped_drawer_1x2.name') or ($new_container_title = 'tile.rc_sd:warped_drawer_2x2.name')",
           "$screen_content": "chest.drawer_panel",
           "$screen_bg_content": "common.screen_background"
         }
@@ -90,7 +83,7 @@
         "array_name": "variables",
         "operation": "insert_back",
         "value": {
-          "requires": "($new_container_title = 'tile.rc_sd:drawer.name' and $pocket_screen)",
+          "requires": "($new_container_title = 'tile.rc_sd:acacia_drawer_1x1.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:acacia_drawer_1x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:acacia_drawer_2x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:bamboo_drawer_1x1.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:bamboo_drawer_1x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:bamboo_drawer_2x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:birch_drawer_1x1.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:birch_drawer_1x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:birch_drawer_2x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:cherry_drawer_1x1.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:cherry_drawer_1x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:cherry_drawer_2x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:crimson_drawer_1x1.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:crimson_drawer_1x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:crimson_drawer_2x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:dark_oak_drawer_1x1.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:dark_oak_drawer_1x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:dark_oak_drawer_2x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:jungle_drawer_1x1.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:jungle_drawer_1x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:jungle_drawer_2x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:mangrove_drawer_1x1.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:mangrove_drawer_1x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:mangrove_drawer_2x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:oak_drawer_1x1.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:oak_drawer_1x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:oak_drawer_2x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:pale_oak_drawer_1x1.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:pale_oak_drawer_1x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:pale_oak_drawer_2x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:spruce_drawer_1x1.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:spruce_drawer_1x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:spruce_drawer_2x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:warped_drawer_1x1.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:warped_drawer_1x2.name' and $pocket_screen) or ($new_container_title = 'tile.rc_sd:warped_drawer_2x2.name' and $pocket_screen)",
           "$screen_content": "chest.drawer_panel",
           "$screen_bg_content": "common.screen_background"
         }

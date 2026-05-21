@@ -2,8 +2,35 @@
   "resource_pack_name": "vatonage",
   "texture_name": "atlas.items",
   "texture_data": {
+    "rc_sd:copper_upgrade": {
+      "textures": "textures/rc/sd/items/upgrade_copper"
+    },
+    "rc_sd:gold_upgrade": {
+      "textures": "textures/rc/sd/items/upgrade_gold"
+    },
+    "rc_sd:diamond_upgrade": {
+      "textures": "textures/rc/sd/items/upgrade_diamond"
+    },
+    "rc_sd:netherite_upgrade": {
+      "textures": "textures/rc/sd/items/upgrade_netherite"
+    },
+    "rc_sd:iron_upgrade": {
+      "textures": "textures/rc/sd/items/upgrade_iron"
+    },
     "rc_sd:air": {
       "textures": "textures/rc/sd/blocks/air"
+    },
+    "rc_sd:compact_drawer": {
+      "textures": "textures/rc/sd/blocks/compact_drawer"
+    },
+    "rc_sd:bamboo_drawer": {
+      "textures": "textures/rc/sd/blocks/bamboo_drawer"
+    },
+    "rc_sd:bamboo_drawer2": {
+      "textures": "textures/rc/sd/blocks/bamboo_drawer2"
+    },
+    "rc_sd:bamboo_drawer4": {
+      "textures": "textures/rc/sd/blocks/bamboo_drawer4"
     },
     "rc_sd:acacia_drawer": {
       "textures": "textures/rc/sd/blocks/acacia_drawer"
@@ -40,6 +67,15 @@
     },
     "rc_sd:crimson_drawer4": {
       "textures": "textures/rc/sd/blocks/crimson_drawer4"
+    },
+    "rc_sd:pale_oak_drawer": {
+      "textures": "textures/rc/sd/blocks/pale_oak_drawer"
+    },
+    "rc_sd:pale_oak_drawer2": {
+      "textures": "textures/rc/sd/blocks/pale_oak_drawer2"
+    },
+    "rc_sd:pale_oak_drawer4": {
+      "textures": "textures/rc/sd/blocks/pale_oak_drawer4"
     },
     "rc_sd:dark_oak_drawer": {
       "textures": "textures/rc/sd/blocks/dark_oak_drawer"

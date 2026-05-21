@@ -208,7 +208,8 @@
         }
       }
     },
-	"animation.rc_sd.item_ajust_block_layer": {
+
+    "animation.rc_sd.visual_type.block_layer": {
       "loop": "hold_on_last_frame",
       "bones": {
         "rightItem": {
@@ -216,12 +217,80 @@
           "position": [0, 0, 0]
         },
         "rootItem": {
-          "scale": [0.8, 0.8, 0.001],
+          "scale": [0.79, 0.79, 0.001],
           "rotation": [0, 0, 0],
-          "position": [4.1, -1.4, 2.7]
+          "position": [4.1, -1.4, 2.48]
         },
         "rightArm": {
           "rotation": [-45, 0.0, 0.0]
+        }
+      }
+    },
+    "animation.rc_sd.visual_type.item_layer": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": ["-45-29.5", -10, 0],
+          "position": [0, 0, 0]
+        },
+        "rootItem": {
+          "scale": [0.79, 0.79, 0.001],
+          "rotation": [0, 0, 0],
+          "position": [3.25, -4.4, 2.48]
+        },
+        "rightArm": {
+          "rotation": [0, 0, -15]
+        }
+      }
+    },
+    "animation.rc_sd.visual_type.invert_layer": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": [0, 0, 0],
+          "position": [0, 0, 0]
+        },
+        "rootItem": {
+          "scale": [0.79, 0.79, 0.001],
+          "rotation": [0, 0, 0],
+          "position": [4.1, 2.2, 2.48]
+        },
+        "rightArm": {
+          "rotation": [0, 180.0, 0.0]
+        }
+      }
+    },
+    "animation.rc_sd.visual_type.weapon_layer": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": ["-45-29.5", 0, 0],
+          "position": [0, 0, 0]
+        },
+        "rootItem": {
+          "scale": [0.47, 0.47, 0.001],
+          "rotation": [0, 0, 0],
+          "position": [5.49, -5.1, 2.48]
+        },
+        "rightArm": {
+          "rotation": [0, -90, -51]
+        }
+      }
+    },
+    "animation.rc_sd.visual_type.stairs_layer": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "rightItem": {
+          "rotation": [0, 0, 0],
+          "position": [0, 0, 0]
+        },
+        "rootItem": {
+          "scale": [0.79, 0.79, 0.001],
+          "rotation": [0, 0, 0],
+          "position": [8.6, 0.2, 2.48]
+        },
+        "rightArm": {
+          "rotation": [-270, 115, 112.0]
         }
       }
     }

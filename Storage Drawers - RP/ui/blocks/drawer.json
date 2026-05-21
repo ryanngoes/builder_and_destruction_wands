@@ -13,7 +13,7 @@
 
   "upgrade_label": {
     "type": "label",
-    "offset": [-59, 57],
+    "offset": [-57, 57],
     "anchor_from": "top_middle",
     "anchor_to": "top_middle",
     "text": "tile.rc_sd:upgrade.name",
@@ -38,13 +38,50 @@
           "collection_index": "$index",
           "text": "#hover_text",
           "color": "$title_text_color",
-          "layer": 10,
+          "layer": 15,
 
           "anchor_from": "right_middle",
           "anchor_to": "right_middle",
           "size": [80, 10],
           "text_alignment": "center",
           "font_scale_factor": 0.7,
+
+          "bindings": [
+            {
+              "binding_name": "#hover_text",
+              "binding_name_override": "#hover_text",
+              "binding_type": "collection",
+              "binding_collection_name": "$collection_name"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "slot_mini_text": {
+    "type": "stack_panel",
+    "$index": 0,
+    "anchor_from": "center",
+    "anchor_to": "center",
+    "orientation": "horizontal",
+    "$collection_name": "container_items",
+    "collection_name": "$collection_name",
+    "$size": [0, 0],
+    "controls": [
+      {
+        "text": {
+          "type": "label",
+          "shadow": true,
+          "collection_index": "$index",
+          "text": "#hover_text",
+          "color": "$title_text_color",
+          "layer": 15,
+
+          "anchor_from": "right_middle",
+          "anchor_to": "right_middle",
+          "size": [80, 10],
+          "text_alignment": "center",
+          "font_scale_factor": 0.5,
 
           "bindings": [
             {
@@ -71,7 +108,7 @@
           "$cell_image_size": [0, 0],
           "$item_renderer_size": "$renderer_size",
           "offset": "$slot_offset",
-          "layer": 1
+          "layer": 5
         }
       }
     ]
@@ -105,8 +142,42 @@
 
     "controls": [
       {
-        "drawer_icon@drawer.item_preview_slot": {
+        "storage_slot_1@drawer.interactive_slot": {
           "$slot_grid_position": [0, 0],
+          "$slot_offset": [-72, -12]
+        }
+      },
+
+      {
+        "storage_slot_2@drawer.interactive_slot": {
+          "$slot_grid_position": [1, 0],
+          "$slot_offset": [-54, -12]
+        }
+      },
+
+      {
+        "storage_slot_3@drawer.interactive_slot": {
+          "$slot_grid_position": [2, 0],
+          "$slot_offset": [-36, -12]
+        }
+      },
+
+      {
+        "storage_slot_4@drawer.interactive_slot": {
+          "$slot_grid_position": [3, 0],
+          "$slot_offset": [-18, -12]
+        }
+      },
+      {
+        "storage_slot_5@drawer.interactive_slot": {
+          "$slot_grid_position": [4, 0],
+          "$slot_offset": [0, -12]
+        }
+      },
+
+      {
+        "drawer_icon@drawer.item_preview_slot": {
+          "$slot_grid_position": [5, 0],
           "$slot_offset": [0, -49],
           "$renderer_size": [48, 48]
         }
@@ -114,7 +185,7 @@
 
       {
         "preview_1x1@drawer.item_preview_slot": {
-          "$slot_grid_position": [1, 0],
+          "$slot_grid_position": [6, 0],
           "$slot_offset": [0, -49],
           "$renderer_size": [16, 16]
         }
@@ -122,7 +193,7 @@
 
       {
         "preview_1x2_top@drawer.item_preview_slot": {
-          "$slot_grid_position": [2, 0],
+          "$slot_grid_position": [7, 0],
           "$slot_offset": [0, -61],
           "$renderer_size": [16, 16]
         }
@@ -130,75 +201,41 @@
 
       {
         "preview_1x2_bottom@drawer.item_preview_slot": {
-          "$slot_grid_position": [3, 0],
-          "$slot_offset": [0, -38],
+          "$slot_grid_position": [8, 0],
+          "$slot_offset": [0, -40],
           "$renderer_size": [16, 16]
         }
       },
 
       {
         "preview_2x2_top_left@drawer.item_preview_slot": {
-          "$slot_grid_position": [4, 0],
-          "$slot_offset": [-12, -61],
+          "$slot_grid_position": [9, 0],
+          "$slot_offset": [-10, -61],
           "$renderer_size": [16, 16]
         }
       },
 
       {
         "preview_2x2_top_right@drawer.item_preview_slot": {
-          "$slot_grid_position": [5, 0],
-          "$slot_offset": [12, -61],
+          "$slot_grid_position": [10, 0],
+          "$slot_offset": [10, -61],
           "$renderer_size": [16, 16]
         }
       },
 
       {
         "preview_2x2_bottom_left@drawer.item_preview_slot": {
-          "$slot_grid_position": [6, 0],
-          "$slot_offset": [-12, -38],
+          "$slot_grid_position": [11, 0],
+          "$slot_offset": [-10, -40],
           "$renderer_size": [16, 16]
         }
       },
 
       {
         "preview_2x2_bottom_right@drawer.item_preview_slot": {
-          "$slot_grid_position": [7, 0],
-          "$slot_offset": [12, -38],
-          "$renderer_size": [16, 16]
-        }
-      },
-
-      {
-        "storage_slot_1@drawer.interactive_slot": {
-          "$slot_grid_position": [8, 0],
-          "$slot_offset": [-72, -12]
-        }
-      },
-
-      {
-        "storage_slot_2@drawer.interactive_slot": {
-          "$slot_grid_position": [9, 0],
-          "$slot_offset": [-54, -12]
-        }
-      },
-
-      {
-        "storage_slot_3@drawer.interactive_slot": {
-          "$slot_grid_position": [10, 0],
-          "$slot_offset": [-36, -12]
-        }
-      },
-
-      {
-        "storage_slot_4@drawer.interactive_slot": {
-          "$slot_grid_position": [11, 0],
-          "$slot_offset": [-18, -12]
-        }
-      },
-      {
-        "storage_slot_5@drawer.interactive_slot": {
           "$slot_grid_position": [12, 0],
-          "$slot_offset": [0, -12]
+          "$slot_offset": [10, -40],
+          "$renderer_size": [16, 16]
         }
       }
     ]
@@ -233,9 +270,94 @@
       },
 
       {
-        "slot_1_name@drawer.slot_text": {
-          "$index": 1,
+        "slot_6_name@drawer.slot_text": {
+          "$index": 6,
           "offset": [0, 44]
+        }
+      },
+
+      {
+        "slot_7_name@drawer.slot_mini_text": {
+          "$index": 7,
+          "offset": [0, 31]
+        }
+      },
+      {
+        "slot_8_name@drawer.slot_mini_text": {
+          "$index": 8,
+          "offset": [0, 52]
+        }
+      },
+
+      {
+        "slot_9_name@drawer.slot_mini_text": {
+          "$index": 9,
+          "offset": [-11, 31]
+        }
+      },
+      {
+        "slot_10_name@drawer.slot_mini_text": {
+          "$index": 10,
+          "offset": [11, 31]
+        }
+      },
+      {
+        "slot_11_name@drawer.slot_mini_text": {
+          "$index": 11,
+          "offset": [-11, 52]
+        }
+      },
+      {
+        "slot_12_name@drawer.slot_mini_text": {
+          "$index": 12,
+          "offset": [11, 52]
+        }
+      },
+
+      {
+        "toolbar_background@loom.toolbar_background": {
+          "size": [21, 21],
+          "offset": [0, -18],
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "controls": [
+            {
+              "toolbar_stack_panel": {
+                "type": "stack_panel",
+                "orientation": "horizontal",
+
+                "size": ["default", "100% - 8px"],
+                "offset": [0, 3],
+                "anchor_from": "top_middle",
+                "anchor_to": "top_middle",
+
+                "controls": [
+                  {
+                    "close_button_panel": {
+                      "type": "panel",
+                      "size": ["100%c", "100%"],
+                      "bindings": [
+                        {
+                          "binding_name": "#close_button_visible",
+                          "binding_name_override": "#visible"
+                        }
+                      ],
+                      "controls": [
+                        {
+                          "close_button@common.light_close_button": {
+                            "size": ["100%cm", "100%cm"],
+                            "offset": [0, 1],
+                            "anchor_from": "center",
+                            "anchor_to": "center"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
         }
       }
     ]

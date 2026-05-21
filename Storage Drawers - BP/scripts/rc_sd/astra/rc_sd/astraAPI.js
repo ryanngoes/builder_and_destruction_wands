@@ -5,8 +5,441 @@ import {
     EquipmentSlot,
     BlockVolume,
     BlockTypes,
-    Block
+    Block,
+    BlockPermutation,
+    system
 } from "@minecraft/server";
+
+import { getGroup, getVisualItem, getGroupData, getItemGroupData, getCompactSlotValue, getCompactTotalBase, updateCompactVisuals } from "./components/compactDrawer";
+
+/**
+ * Converte direção para número.
+ * @param {string} direction
+ * @returns {number|undefined}
+ */
+export function directionToNum(direction) {
+    if (direction === "up" || direction === "above") return 1;
+    if (direction === "down" || direction === "below") return 0;
+    if (direction === "north") return 2;
+    if (direction === "south") return 3;
+    if (direction === "west") return 4;
+    if (direction === "east") return 5;
+}
+
+export function addItemFromHopper(block, entity) {
+    if (!block?.isValid || !entity?.isValid) return;
+
+    const storageComponent = block.getComponent("rc_sd:storage_drawer");
+    const compactComponent = block.getComponent("rc_sd:compact_drawer");
+
+    const config =
+        storageComponent?.customComponentParameters.params ??
+        compactComponent?.customComponentParameters.params;
+
+    if (!config) return;
+
+    if (compactComponent) {
+        return addItemFromHopperCompact(block, entity, config);
+    }
+
+    return addItemFromHopperNormal(block, entity, config);
+}
+
+function addItemFromHopperNormal(block, entity, config) {
+    const type = config.type;
+    const amountPerSlot = config.amount_per_slot;
+
+    const drawerInventory = entity.getComponent("minecraft:inventory")?.container;
+    if (!drawerInventory) return;
+
+    const faces = ["above", "east", "south", "west", "north"];
+
+    for (const face of faces) {
+        const hopperBlock = block[face]?.();
+        if (!hopperBlock || hopperBlock.typeId !== "minecraft:hopper") continue;
+
+        const states = hopperBlock.permutation.getAllStates();
+
+        const isValidHopper =
+            states["facing_direction"] === directionToNum(invertFace(face)) &&
+            states["toggle_bit"] === false;
+
+        if (!isValidHopper) continue;
+
+        const hopperInventory = hopperBlock.getComponent("minecraft:inventory")?.container;
+        if (!hopperInventory) continue;
+
+        const visualItems = block.dimension.getEntities({
+            location: block.center(),
+            type: type === "1x1" ? "rc_sd:normal_visual_item" : "rc_sd:small_visual_item",
+            maxDistance: 0.5,
+            tags: [entity.id]
+        }).sort((a, b) => Number(a.nameTag) - Number(b.nameTag));
+
+        for (let hopperSlot = 0; hopperSlot < hopperInventory.size; hopperSlot++) {
+            const hopperItem = hopperInventory.getItem(hopperSlot);
+            if (!hopperItem) continue;
+
+            for (const visualItem of visualItems) {
+                if (!visualItem?.isValid) continue;
+
+                const visualInventory = visualItem.getComponent("minecraft:inventory")?.container;
+                if (!visualInventory) continue;
+
+                let quantity = StorageQuantityScoreboard.get(visualItem);
+                const maxQuantity = DrawerInventoryManager.getStorageLimit(amountPerSlot, drawerInventory);
+
+                if (quantity >= maxQuantity) continue;
+
+                let itemInDrawer = visualInventory.getItem(0);
+
+                // Drawer vazio
+                if (!itemInDrawer) {
+                    // Se estiver lockado, não pode definir item novo
+                    if (block.permutation.getState("rc_sd:lock") === true) continue;
+
+                    const visualItemType = itemType(block, hopperItem);
+                    const numberToType = typeToNumber(visualItemType);
+
+                    const replaceId = visualItemType === "fake"
+                        ? `rc_sd:${hopperItem.typeId.split(":")[1]}_item_fake`
+                        : hopperItem.typeId;
+
+                    system.runTimeout(() => {
+                        visualItem.runCommand(`replaceitem entity @s slot.weapon.mainhand 0 ${replaceId}`);
+                    }, 1)
+
+                    const newItem = hopperItem.clone();
+                    newItem.amount = 1;
+
+                    visualInventory.setItem(0, newItem);
+                    visualItem.setProperty("rc_sd:visual_type", numberToType);
+
+                    itemInDrawer = newItem;
+                }
+
+                if (!compareItems(hopperItem, itemInDrawer)) continue;
+
+                const spaceLeft = maxQuantity - quantity;
+                if (spaceLeft <= 0) continue;
+
+                // Comportamento de hopper vanilla: passa 1 item por vez
+                const amountToAdd = Math.min(1, hopperItem.amount, spaceLeft);
+
+                StorageQuantityScoreboard.set(visualItem, quantity + amountToAdd);
+
+                if (hopperItem.amount > amountToAdd) {
+                    hopperItem.amount -= amountToAdd;
+                    hopperInventory.setItem(hopperSlot, hopperItem);
+                } else {
+                    hopperInventory.setItem(hopperSlot, undefined);
+                }
+
+                const newQuantity = quantity + amountToAdd;
+
+                const displayItem = itemInDrawer.clone();
+                displayItem.amount = 1;
+                displayItem.nameTag = `§r§f${normalizeNumber(newQuantity)}/${normalizeNumber(maxQuantity)}`;
+
+                const inventorySlot = getInventorySlot(type, Number(visualItem.nameTag));
+                setItemSlot(displayItem, inventorySlot, entity);
+
+                const visual = formatVisualNumber(newQuantity);
+
+                for (const [key, value] of Object.entries(visual)) {
+                    visualItem.setProperty(`rc_sd:${key}`, value);
+                }
+
+                // Depois de mover 1 item, para imitar o hopper vanilla.
+                return;
+            }
+        }
+    }
+}
+
+function addItemFromHopperCompact(block, inventoryEntity, config) {
+    const drawerInventory = inventoryEntity.getComponent("minecraft:inventory")?.container;
+    if (!drawerInventory) return;
+
+    const center = block.center();
+    const dimension = block.dimension;
+
+    const faces = ["above", "east", "south", "west", "north"];
+
+    for (const face of faces) {
+        const hopperBlock = block[face]?.();
+        if (!hopperBlock || hopperBlock.typeId !== "minecraft:hopper") continue;
+
+        const states = hopperBlock.permutation.getAllStates();
+
+        const isValidHopper =
+            states["facing_direction"] === directionToNum(invertFace(face)) &&
+            states["toggle_bit"] === false;
+
+        if (!isValidHopper) continue;
+
+        const hopperInventory = hopperBlock.getComponent("minecraft:inventory")?.container;
+        if (!hopperInventory) continue;
+
+        for (let hopperSlot = 0; hopperSlot < hopperInventory.size; hopperSlot++) {
+            const hopperItem = hopperInventory.getItem(hopperSlot);
+            if (!hopperItem) continue;
+
+            const hopperGroup = getGroup(hopperItem.typeId);
+            if (!hopperGroup) continue;
+
+            const existingGroup = getExistingCompactGroup(dimension, center);
+
+            // Drawer vazio + lockado não pode definir item novo
+            if (!existingGroup && block.permutation.getState("rc_sd:lock") === true) {
+                continue;
+            }
+
+            // Se já tem grupo, só aceita itens do mesmo grupo
+            if (existingGroup && existingGroup !== hopperGroup) {
+                continue;
+            }
+
+            const group = existingGroup ?? hopperGroup;
+            const groupData = getGroupData(group);
+
+            const itemData = getItemGroupData(groupData, hopperItem.typeId);
+            if (!itemData) continue;
+
+            const maxQuantity = DrawerInventoryManager.getStorageLimit(
+                config.amount_per_slot,
+                drawerInventory
+            );
+
+            const baseValue = getCompactSlotValue(0, groupData);
+            const maxBase = maxQuantity * baseValue;
+
+            let totalBase = getCompactTotalBase(dimension, center, groupData);
+            if (totalBase >= maxBase) continue;
+
+            const result = calculateHopperCompactAdd(
+                hopperItem,
+                itemData,
+                groupData,
+                totalBase,
+                maxBase
+            );
+
+            if (result.amount <= 0) continue;
+
+            totalBase += result.base;
+
+            if (hopperItem.amount > result.amount) {
+                hopperItem.amount -= result.amount;
+                hopperInventory.setItem(hopperSlot, hopperItem);
+            } else {
+                hopperInventory.setItem(hopperSlot, undefined);
+            }
+
+            updateCompactVisuals({
+                block,
+                dimension,
+                center,
+                inventoryEntity,
+                groupData,
+                totalBase,
+                maxBase
+            });
+
+            // Hopper vanilla move 1 item por vez
+            return;
+        }
+    }
+}
+export function getExistingCompactGroup(dimension, center) {
+    for (let slot = 0; slot < 3; slot++) {
+        const visualItem = getVisualItem(dimension, center, slot);
+        if (!visualItem?.isValid) continue;
+
+        const item = visualItem
+            .getComponent("minecraft:inventory")
+            ?.container
+            ?.getItem(0);
+
+        if (!item) continue;
+
+        const group = getGroup(item.typeId);
+        if (group) return group;
+    }
+
+    return null;
+}
+function calculateHopperCompactAdd(itemStack, itemData, groupData, totalBase, maxBase) {
+    const value = getCompactSlotValue(itemData.relativeSlot, groupData);
+    const spaceLeftBase = maxBase - totalBase;
+
+    if (spaceLeftBase <= 0) {
+        return { amount: 0, base: 0 };
+    }
+
+    const maxItemsToAdd = Math.floor(spaceLeftBase / value);
+
+    const amount = Math.min(
+        1,
+        itemStack.amount,
+        maxItemsToAdd
+    );
+
+    return {
+        amount,
+        base: amount * value
+    };
+}
+
+export function removeItemFromHopper(block, slotA, slotB) {
+    let [entity] = block.dimension.getEntities({
+        type: block.typeId,
+        location: block.center(),
+        maxDistance: 0.75
+    });
+
+    const [dataBase] = block.dimension.getEntities({
+        type: "vtng_pb:data_base",
+        location: block.center(),
+        maxDistance: 0.75
+    });
+
+    if (!dataBase) return;
+
+    const dataInv = dataBase.getComponent("inventory").container;
+
+    const machineConfig = {
+        "vtng_pb:centrifuge": {
+            updateVisual: (inv, entity) => centrifuge.updateVisualSlots(inv, entity)
+        },
+        "vtng_pb:powered_centrifuge": {
+            updateVisual: (inv, entity) => poweredCentrifuge.updateVisualSlots(inv, entity)
+        },
+        "vtng_pb:heated_centrifuge": {
+            updateVisual: (inv, entity) => heatedCentrifuge.updateVisualSlots(inv, entity)
+        }
+    };
+
+    let config = machineConfig[block.typeId];
+
+    if (!config && block.typeId.includes("advanced_") && block.typeId.includes("_beehive")) {
+        const connection = block.permutation.getState("vtng_pb:connection_direction");
+        [entity] = block.dimension.getEntities({ type: connection == "none" ? "vtng_pb:advanced_beehive" : "vtng_pb:advanced_beehive_expanded", location: block.center(), maxDistance: 0.75 });
+        config = {
+            updateVisual: (inv, entity) => beeHive.updateVisualSlots(inv, entity)
+        };
+    }
+
+    if (!config) return;
+
+    const hopper = block.below();
+    if (!hopper || hopper.typeId !== "minecraft:hopper") return;
+
+    const states = hopper.permutation.getAllStates();
+    if (states["toggle_bit"] !== false) return;
+
+    const hopperInv = hopper.getComponent("inventory").container;
+
+    for (let i = slotA; i <= slotB; i++) {
+        const item = dataInv.getItem(i);
+        if (!item) continue;
+
+        const newItem = item.clone();
+        newItem.amount = 1;
+
+        const leftover = hopperInv.addItem(newItem);
+
+        if (!leftover) {
+            if (item.amount > 1) {
+                item.amount--;
+                dataInv.setItem(i, item);
+            } else
+                dataInv.setItem(i, null);
+
+            if (entity)
+                config.updateVisual(dataInv, entity);
+
+            break;
+        }
+    }
+}
+
+/**
+ * Retorna a face oposta (invertida).
+ * @param {"above"|"below"|"north"|"south"|"west"|"east"} face
+ * @returns {string|undefined}
+ */
+export function invertFace(face) {
+    if (face == "above") return "below";
+    if (face == "below") return "above";
+    if (face == "north") return "south";
+    if (face == "south") return "north";
+    if (face == "west") return "east";
+    if (face == "east") return "west";
+}
+
+/**
+ * Converte uma face “local” (relativa) para a face “real” no mundo, baseado no state de rotação do bloco.
+ * @param {mc.Block} block
+ * @param {"north"|"south"|"west"|"east"} face Face relativa
+ * @param {string} [stateName="minecraft:cardinal_direction"] Nome do state
+ * @returns {string}
+ */
+export function trueFace(block, face, stateName) {
+    const rotation = block?.permutation?.getState(stateName || "minecraft:cardinal_direction");
+    if (!rotation) return face;
+
+    const faceMap = {
+        north: { north: "north", south: "south", west: "west", east: "east" },
+        east: { north: "west", south: "east", west: "south", east: "north" },
+        south: { north: "south", south: "north", west: "east", east: "west" },
+        west: { north: "east", south: "west", west: "north", east: "south" },
+    };
+
+    return faceMap[rotation]?.[face] || face;
+}
+
+export function setPermutation(block, stateAdd, stateValue) {
+    const result = block.permutation.getAllStates();
+    result[stateAdd] = stateValue;
+    block.setPermutation(BlockPermutation.resolve(block?.typeId, result));
+}
+
+export function moveItemFromContainers(
+    fromContainer,
+    fromSlot,
+    toContainer,
+    toSlot,
+    quantity
+) {
+    if (!fromContainer || !toContainer) return 0;
+    if (typeof quantity !== "number" || quantity <= 0) return 0;
+
+    const src = fromContainer.getItem(fromSlot);
+    if (!src) return 0;
+
+    // limita à quantidade disponível no slot
+    const toMove = Math.min(quantity | 0, src.amount);
+
+    // clona e ajusta a quantidade
+    const clone = src.clone();
+    clone.amount = toMove;
+
+    // coloca no destino (sobrescreve)
+    toContainer.setItem(toSlot, clone);
+
+    // desconta do slot de origem
+    const remaining = src.amount - toMove;
+    if (remaining > 0) {
+        const newSrc = src.clone();
+        newSrc.amount = remaining;
+        fromContainer.setItem(fromSlot, newSrc);
+    } else {
+        fromContainer.setItem(fromSlot, undefined); // limpa slot
+    }
+
+    return toMove;
+}
 
 const lastClickTimes = new Map();
 export function doubleClick(player) {
@@ -79,6 +512,57 @@ function makePlain(value) {
 function charToDigit(char) {
     if (char === " ") return 10;
     return Number(char);
+}
+
+const watchedSlots = [0,1,2,3,4]; // slots que você quer observar
+const previous = new Map();
+
+function getSlotKey(entityId, slot) {
+    return `${entityId}:${slot}`;
+}
+
+export function checkSlots(entity) {
+    const inventory = entity.getComponent("minecraft:inventory");
+    const container = inventory?.container;
+
+    if (!container) return false;
+
+    const entityId = entity.id;
+    const slots = watchedSlots;
+    const prev = previous;
+
+    let changed = false;
+
+    for (let i = 0, len = slots.length; i < len; i++) {
+
+        const slot = slots[i];
+        const key = getSlotKey(entityId, slot);
+
+        const currentItem = container.getItem(slot);
+        const previousItem = prev.get(key);
+
+        if (currentItem == null) {
+            if (previousItem != null) {
+                prev.delete(key);
+                changed = true;
+            }
+
+            continue;
+        }
+
+        if (previousItem == null) {
+            prev.set(key, currentItem.clone());
+            changed = true;
+            continue;
+        }
+
+        if (!compareItems(previousItem, currentItem)) {
+            prev.set(key, currentItem.clone());
+            changed = true;
+        }
+    }
+
+    return changed;
 }
 
 export function compareItems(a, b) {
@@ -243,21 +727,21 @@ export function setItemSlot(item, slot, entity) {
 
 export class ItemTypeManager {
     static typeNumbers = Object.freeze({
-        item: 0,
-        block: 1,
-        weapon: 2,
+        block: 128,
+        item: 127,
+        invert: 126,
+        weapon: 125,
+        stair: 124,
+
         misc: 3,
         small: 4,
         beacon: 5,
-        fence: 6,
-        invert: 7,
         heavy: 8,
         wall: 9,
         rod: 10,
         dripstone: 11,
         fake: 12,
 
-        layer: 128
     });
 
     static nonBlockItems = new Set([
@@ -379,14 +863,9 @@ export class ItemTypeManager {
 
         if (!id) return "item";
 
-        //teste
-        if (id === "minecraft:diamond_block" || id === "minecraft:stonecutter_block") {
-            return "layer";
-        }
-
         if (this.fakeItems.has(id)) return "fake";
 
-        if (id === "minecraft:item_frame" || id === "minecraft:glow_item_frame") {
+        if (id === "minecraft:frame" || id === "minecraft:glow_frame") {
             return "item";
         }
 
@@ -394,7 +873,9 @@ export class ItemTypeManager {
             return "block";
         }
 
-        if (this.nonBlockItems.has(id) || this.matchesAny(id, this.nonBlockPatterns)) {
+        if (id.includes("stair")) return "stair";
+
+        if (this.nonBlockItems.has(id) || this.matchesAny(id, this.nonBlockPatterns) || (id.startsWith("minecraft:") && id.endsWith("_lantern"))) {
             return "item";
         }
 
@@ -404,12 +885,8 @@ export class ItemTypeManager {
 
         if (id.includes("_wall")) return "wall";
 
-        if (this.invertBlocks.has(id) || id.includes("_drawer_")) {
+        if (this.invertBlocks.has(id) || (id.endsWith("_chest"))) {
             return "invert";
-        }
-
-        if (id.includes("fence") || id === "minecraft:anvil") {
-            return "fence";
         }
 
         if (id === "minecraft:pointed_dripstone") return "dripstone";
@@ -418,13 +895,6 @@ export class ItemTypeManager {
         if (id === "minecraft:end_rod" || id === "minecraft:lightning_rod") {
             return "rod";
         }
-
-        if (id === "minecraft:beacon" || id === "minecraft:dragon_egg") {
-            return "beacon";
-        }
-
-        if (id === "minecraft:decorated_pot") return "misc";
-        if (id.includes("_amethyst_bud")) return "small";
 
         if (this.isRegisteredBlock(id)) {
             return "block";
@@ -493,6 +963,18 @@ export class ItemTypeManager {
         }
     }
 }
+
+/**
+ * Cardinal → Rotation XY
+ */
+export const cardinalToRotation = {
+    north: { x: 0, y: 0 },
+    south: { x: 0, y: 180 },
+    west: { x: 0, y: -90 },
+    east: { x: 0, y: 90 },
+    up: { x: -90, y: 0 },
+    down: { x: 90, y: 0 }
+};
 
 /**
  * Classe utilitária de vetor 3D.
@@ -795,6 +1277,7 @@ export class StorageQuantityScoreboard {
 export class DrawerInventoryManager {
     static upgrades = {
         "rc_sd:copper_upgrade": 8,
+        "rc_sd:iron_upgrade": 12,
         "rc_sd:gold_upgrade": 16,
         "rc_sd:diamond_upgrade": 24,
         "rc_sd:netherite_upgrade": 32
@@ -827,7 +1310,7 @@ export class DrawerInventoryManager {
         return limit;
     }
 
-    static slotInventoryMap = Object.freeze({ "ender": [1], "1x1": [1], "1x2": [2, 3], "2x2": [4, 5, 6, 7] });
+    static slotInventoryMap = Object.freeze({ "ender": [6], "1x1": [6], "1x2": [7, 8], "2x2": [9, 10, 11, 12], "compact": [7, 11, 12] });
     static listUpgrade = Object.freeze({ "rc_sd:copper_upgrade": 8, "rc_sd:gold_upgrade": 16, "rc_sd:diamond_upgrade": 24, "rc_sd:netherite_upgrade": 32 });
     static utilityUpgrade = Object.freeze(["rc_sd:void_upgrade"]);
 

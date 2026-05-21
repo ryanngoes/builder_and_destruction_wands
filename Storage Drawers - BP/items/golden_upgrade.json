@@ -1,0 +1,16 @@
+{
+  "format_version": "1.26.0",
+  "minecraft:item": {
+    "description": {
+      "identifier": "rc_sd:golden_upgrade",
+      "menu_category": {
+        "category": "items",
+        "is_hidden_in_commands": false
+      }
+    },
+    "components": {
+      "minecraft:icon": "rc_sd:gold_upgrade",
+      "minecraft:max_stack_size": 1
+    }
+  }
+}

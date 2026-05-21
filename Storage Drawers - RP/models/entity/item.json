@@ -6,13 +6,18 @@
 				"identifier": "geometry.rc_sd.visual_item",
 				"texture_width": 5,
 				"texture_height": 7,
-				"visible_bounds_width": 3,
+				"visible_bounds_width": 6,
 				"visible_bounds_height": 3,
 				"visible_bounds_offset": [0, 0.5, 0]
 			},
 			"bones": [
 				{
 					"name": "root",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "position",
+					"parent": "root",
 					"pivot": [0, 0, 0],
 					"cubes": [
 						{
@@ -31,7 +36,7 @@
 				},
 				{
 					"name": "globalItemAjust",
-					"parent": "root",
+					"parent": "position",
 					"pivot": [0, 0, 0]
 				},
 				{
@@ -51,16 +56,17 @@
 				},
 				{
 					"name": "display_numbers",
-					"pivot": [1, 0, 0],
+					"parent": "position",
+					"pivot": [1, -7, 12],
 					"rotation": [0, 180, 0]
 				},
 				{
 					"name": "digit_0",
 					"parent": "display_numbers",
-					"pivot": [1, 0, 0],
+					"pivot": [2, 0, 0],
 					"cubes": [
 						{
-							"origin": [-2.144, -8, -11.7],
+							"origin": [-2.144, -8, 12],
 							"size": [1.43, 2, 0],
 							"uv": {
 								"north": {"uv": [0, 0], "uv_size": [5, 7]}
@@ -71,10 +77,10 @@
 				{
 					"name": "digit_1",
 					"parent": "display_numbers",
-					"pivot": [1, 0, -1],
+					"pivot": [1, 0, 0],
 					"cubes": [
 						{
-							"origin": [-0.428, -8, -11.7],
+							"origin": [-0.428, -8, 12],
 							"size": [1.43, 2, 0],
 							"uv": {
 								"north": {"uv": [0, 0], "uv_size": [5, 7]}
@@ -85,10 +91,10 @@
 				{
 					"name": "digit_2",
 					"parent": "display_numbers",
-					"pivot": [1, 0, -1],
+					"pivot": [1, 0, 0],
 					"cubes": [
 						{
-							"origin": [1.288, -8, -11.7],
+							"origin": [1.288, -8, 12],
 							"size": [1.43, 2, 0],
 							"uv": {
 								"north": {"uv": [0, 0], "uv_size": [5, 7]}
@@ -99,10 +105,10 @@
 				{
 					"name": "dot",
 					"parent": "display_numbers",
-					"pivot": [1, 2, -1],
+					"pivot": [1, 0, 0],
 					"cubes": [
 						{
-							"origin": [3.005, -8, -11.7],
+							"origin": [3.005, -8, 12],
 							"size": [0.286, 0.572, 0],
 							"uv": {
 								"north": {"uv": [2, 5], "uv_size": [1, 2]}
@@ -113,10 +119,10 @@
 				{
 					"name": "digit_3",
 					"parent": "display_numbers",
-					"pivot": [1, 0, -1],
+					"pivot": [1, 0, 0],
 					"cubes": [
 						{
-							"origin": [3.576, -8, -11.7],
+							"origin": [3.576, -8, 12],
 							"size": [1.43, 2, 0],
 							"uv": {
 								"north": {"uv": [0, 0], "uv_size": [5, 7]}
@@ -127,10 +133,10 @@
 				{
 					"name": "suffix",
 					"parent": "display_numbers",
-					"pivot": [1, 2, -1],
+					"pivot": [1, 0, 0],
 					"cubes": [
 						{
-							"origin": [5.292, -8, -11.7],
+							"origin": [5.292, -8, 12],
 							"size": [1.43, 2, 0],
 							"uv": {
 								"north": {"uv": [0, 0], "uv_size": [5, 7]}

@@ -17,6 +17,42 @@
           "type": "int",
           "default": 0,
           "range": [0, 128]
+        },
+
+        "rc_sd:digit_0": {
+          "client_sync": true,
+          "type": "int",
+          "default": 10,
+          "range": [0, 10]
+        },
+        "rc_sd:digit_1": {
+          "client_sync": true,
+          "type": "int",
+          "default": 10,
+          "range": [0, 10]
+        },
+        "rc_sd:digit_2": {
+          "client_sync": true,
+          "type": "int",
+          "default": 10,
+          "range": [0, 10]
+        },
+        "rc_sd:dot": {
+          "client_sync": true,
+          "type": "bool",
+          "default": false
+        },
+        "rc_sd:digit_3": {
+          "client_sync": true,
+          "type": "int",
+          "default": 10,
+          "range": [0, 10]
+        },
+        "rc_sd:suffix": {
+          "client_sync": true,
+          "type": "int",
+          "default": 0,
+          "range": [0, 3]
         }
       }
     },
@@ -64,7 +100,7 @@
         ]
       },
       "minecraft:scale": {
-        "value": 0.6
+        "value": 0.3
       },
       "minecraft:inside_block_notifier": {
         "block_list": [

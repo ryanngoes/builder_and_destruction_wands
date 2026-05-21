@@ -27,7 +27,8 @@
           "digit_2": false,
           "dot": false,
           "digit_3": false,
-          "suffix": false
+          "suffix": false,
+          "position": false
         }
       ],
       "geometry": "Geometry.default",
@@ -67,7 +68,8 @@
           "digit_2": false,
           "dot": false,
           "digit_3": false,
-          "suffix": false
+          "suffix": false,
+          "position": false
         }
       ],
       "geometry": "Geometry.default",
@@ -107,7 +109,8 @@
           "digit_2": true,
           "dot": false,
           "digit_3": false,
-          "suffix": false
+          "suffix": false,
+          "position": false
         }
       ],
       "geometry": "Geometry.default",
@@ -147,7 +150,8 @@
           "digit_2": false,
           "dot": false,
           "digit_3": true,
-          "suffix": false
+          "suffix": false,
+          "position": false
         }
       ],
       "geometry": "Geometry.default",
@@ -174,7 +178,8 @@
           "digit_2": false,
           "dot": true,
           "digit_3": false,
-          "suffix": false
+          "suffix": false,
+          "position": false
         }
       ],
       "geometry": "Geometry.default",
@@ -206,7 +211,8 @@
           "digit_2": false,
           "dot": false,
           "digit_3": false,
-          "suffix": true
+          "suffix": true,
+          "position": false
         }
       ],
       "geometry": "Geometry.default",

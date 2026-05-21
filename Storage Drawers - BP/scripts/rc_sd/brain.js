@@ -6,3 +6,15 @@ import * as astra from "./astra/events.js";
 mc.system.beforeEvents.startup.subscribe(data => {
     astra.startupEvent(data);
 })
+
+mc.world.afterEvents.entityHitBlock.subscribe(data => {
+    astra.entityHitBlockEvent(data);
+})
+
+mc.world.beforeEvents.playerBreakBlock.subscribe(data => {
+    astra.playerBreakBlockEvent(data);
+})
+
+mc.system.runInterval(() => {
+    astra.runIntervalEvent();
+});

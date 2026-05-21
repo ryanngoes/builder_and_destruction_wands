@@ -1,14 +1,33 @@
 {
   "format_version": "1.8.0",
   "animations": {
-    "animation.rc_sd.adjust_display": {
+    "animation.rc_sd.normal_adjust_display": {
       "loop": "hold_on_last_frame",
       "bones": {
         "display_numbers": {
           "position": [
             "(q.property('rc_sd:suffix') != 0 && q.property('rc_sd:digit_0') != 10) ? 0.286 * 1 : (q.property('rc_sd:suffix') != 0 && q.property('rc_sd:digit_1') != 10) ? 0.286 * 4 : (q.property('rc_sd:suffix') != 0 ? 0.286 * 7 : (q.property('rc_sd:digit_0') != 10 ? -0.286 * 6 : (q.property('rc_sd:digit_1') != 10 ? -0.286 * 3 : 0)))",
-            -1,
-            0
+            -1.8,
+            -0.32
+          ]
+        }
+      }
+    },
+    "animation.rc_sd.small_adjust_display": {
+      "loop": "hold_on_last_frame",
+      "bones": {
+        "display_numbers": {
+          "position": [
+            "(q.property('rc_sd:suffix') != 0 && q.property('rc_sd:digit_0') != 10) ? 0.286 * 1 : (q.property('rc_sd:suffix') != 0 && q.property('rc_sd:digit_1') != 10) ? 0.286 * 4 : (q.property('rc_sd:suffix') != 0 ? 0.286 * 7 : (q.property('rc_sd:digit_0') != 10 ? -0.286 * 6 : (q.property('rc_sd:digit_1') != 10 ? -0.286 * 3 : 0)))",
+            -1.0,
+            -0.32
+          ]
+        },
+        "position": {
+          "position": [
+            0,
+            0,
+            11.7
           ]
         }
       }

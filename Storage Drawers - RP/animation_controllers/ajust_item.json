@@ -46,7 +46,19 @@
             },
 
             {
-              "ajust_layer": "q.property('rc_sd:visual_type') == 128"
+              "visual_type_block_layer": "q.property('rc_sd:visual_type') == 128"
+            },
+            {
+              "visual_type_item_layer": "q.property('rc_sd:visual_type') == 127"
+            },
+            {
+              "visual_type_invert_layer": "q.property('rc_sd:visual_type') == 126"
+            },
+            {
+              "visual_type_weapon_layer": "q.property('rc_sd:visual_type') == 125"
+            },
+            {
+              "visual_type_stairs_layer": "q.property('rc_sd:visual_type') == 124"
             }
           ]
         },
@@ -108,10 +120,35 @@
             { "default": "q.property('rc_sd:visual_type') != 12" }
           ]
         },
-        "ajust_layer": {
-          "animations": ["ajust_layer"],
+
+        "visual_type_block_layer": {
+          "animations": ["visual_type_block_layer"],
           "transitions": [
             { "default": "q.property('rc_sd:visual_type') != 128" }
+          ]
+        },
+        "visual_type_item_layer": {
+          "animations": ["visual_type_item_layer"],
+          "transitions": [
+            { "default": "q.property('rc_sd:visual_type') != 127" }
+          ]
+        },
+        "visual_type_invert_layer": {
+          "animations": ["visual_type_invert_layer"],
+          "transitions": [
+            { "default": "q.property('rc_sd:visual_type') != 126" }
+          ]
+        },
+        "visual_type_weapon_layer": {
+          "animations": ["visual_type_weapon_layer"],
+          "transitions": [
+            { "default": "q.property('rc_sd:visual_type') != 125" }
+          ]
+        },
+        "visual_type_stairs_layer": {
+          "animations": ["visual_type_stairs_layer"],
+          "transitions": [
+            { "default": "q.property('rc_sd:visual_type') != 124" }
           ]
         }
       }

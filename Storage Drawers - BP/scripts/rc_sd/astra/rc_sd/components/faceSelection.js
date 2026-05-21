@@ -34,6 +34,7 @@ export default class FaceSelectionPlains {
         const horizontalAxis = face === Direction.East || face === Direction.West ? "z" : "x";
         const verticalAxis = face === Direction.Up || face === Direction.Down ? "z" : "y";
 
+
         if (face !== Direction.Down) location[verticalAxis] = 1 - location[verticalAxis];
         if (face !== Direction.South && face !== Direction.West)
             location[horizontalAxis] = 1 - location[horizontalAxis];

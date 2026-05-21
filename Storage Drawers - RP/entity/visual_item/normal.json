@@ -29,7 +29,8 @@
         "default": "geometry.rc_sd.visual_item"
       },
       "animations": {
-        "adjust_display": "animation.rc_sd.adjust_display",
+        "adjust_display": "animation.rc_sd.normal_adjust_display",
+        
         "rotation": "animation.rc_sd.storage_drawer.rotation",
         "adjust_item": "controller.animation.rc_sd.ajust_item",
         "ajust_normal": "animation.rc_sd.item_ajust_normal",
@@ -45,8 +46,14 @@
         "ajust_rod": "animation.rc_sd.item_ajust_rod",
         "ajust_dripstone": "animation.rc_sd.item_ajust_dripstone",
         "ajust_ssb": "animation.rc_sd.item_ajust_ssb",
-        "ajust_layer": "animation.rc_sd.item_ajust_block_layer"
+
+        "visual_type_block_layer": "animation.rc_sd.visual_type.block_layer",
+        "visual_type_item_layer": "animation.rc_sd.visual_type.item_layer",
+        "visual_type_invert_layer": "animation.rc_sd.visual_type.invert_layer",
+        "visual_type_weapon_layer": "animation.rc_sd.visual_type.weapon_layer",
+        "visual_type_stairs_layer": "animation.rc_sd.visual_type.stairs_layer"
       },
+      "held_item_ignores_lighting": true,
       "scripts": {
         "animate": ["adjust_display", "adjust_item", "rotation"]
       },
