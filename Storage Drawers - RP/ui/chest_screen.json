@@ -43,12 +43,12 @@
                   },
                   {
                     "inventory_panel_bottom_half@common.inventory_panel": {
-                      "offset": [0, -3]
+                      "offset": [0, 0]
                     }
                   },
                   {
                     "hotbar_grid@common.hotbar_grid_template": {
-                      "offset": [0, -7]
+                      "offset": [0, -5]
                     }
                   },
                   {

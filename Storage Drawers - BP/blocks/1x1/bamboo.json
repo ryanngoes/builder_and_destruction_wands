@@ -37,6 +37,7 @@
         "type": "1x1",
         "amount_per_slot": 2048
       },
+      "minecraft:display_name": "%tile.rc_sd.bamboo_drawer_1x1.name\n%rc_sd.identifier",
       "minecraft:destructible_by_mining": {
         "seconds_to_destroy": 3,
         "item_specific_speeds": [

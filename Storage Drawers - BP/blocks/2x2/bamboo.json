@@ -99,7 +99,8 @@
           "texture": "rc_sd:bamboo_drawer_top",
           "render_method": "opaque"
         }
-      }
+      },
+      "minecraft:display_name": "%tile.rc_sd.bamboo_drawer_2x2.name\n%rc_sd.identifier"
     },
     "permutations": [
       {

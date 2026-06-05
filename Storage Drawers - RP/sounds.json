@@ -1,0 +1,12 @@
+{
+
+  "entity_sounds": {
+    "entities": {
+      "rc_sd:pipe_visual_item": {
+        "events": {
+          "step": "null"
+        }
+      }
+    }
+  }
+}

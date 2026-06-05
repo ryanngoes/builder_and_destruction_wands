@@ -99,7 +99,8 @@
           "texture": "rc_sd:dark_oak_drawer_top",
           "render_method": "opaque"
         }
-      }
+      },
+      "minecraft:display_name": "%tile.rc_sd.dark_oak_drawer_1x1.name\n%rc_sd.identifier"
     },
     "permutations": [
       {

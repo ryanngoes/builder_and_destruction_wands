@@ -1,6 +1,30 @@
 {
   "format_version": "1.8.0",
   "animations": {
+    "animation.rc_sd.pipe_visual_item_float": {
+			"loop": true,
+			"animation_length": 3.0,
+            "bones": {
+				
+				"root": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"3.0": [0, -360, 0]
+					},
+					"scale": 1
+				},
+				"rightItem": {
+				  "position": [-3,3.2,-4],
+					"rotation": [0,0,0]
+				},
+				"rootItem": {
+					"rotation": [0, -90, -24]
+				},
+				"rightArm": {
+					"rotation": [-35.0, 75.0, 40.0]
+				}
+            }
+		},
     "animation.rc_sd.normal_adjust_display": {
       "loop": "hold_on_last_frame",
       "bones": {

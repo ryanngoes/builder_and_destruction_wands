@@ -99,7 +99,8 @@
           "texture": "rc_sd:birch_drawer_top",
           "render_method": "opaque"
         }
-      }
+      },
+      "minecraft:display_name": "%tile.rc_sd.birch_drawer_2x2.name\n%rc_sd.identifier"
     },
     "permutations": [
       {

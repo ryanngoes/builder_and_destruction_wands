@@ -7,6 +7,8 @@ import { updateCompactVisuals, getGroupData, getCompactSlotValue, getCompactTota
 
 import FaceSelectionPlains from './faceSelection.js';
 
+import * as pipe from "./pipe.js";
+
 const isFrontFace = (block, face) => block.permutation.getState("minecraft:cardinal_direction") === face.toLowerCase();
 
 /** @param {mc.StartupEvent} data */
@@ -25,10 +27,10 @@ export function storageDrawerComponent(data) {
             const rotation = block.permutation.getState("minecraft:cardinal_direction");
 
             const invertByRotation = {
-                north: { invertU: false, invertV: false },
-                south: { invertU: false, invertV: false },
-                east: { invertU: false, invertV: false },
-                west: { invertU: false, invertV: false },
+                north: { invertU: true, invertV: false },
+                south: { invertU: true, invertV: false },
+                east: { invertU: true, invertV: false },
+                west: { invertU: true, invertV: false },
             };
 
             const slotConfigs = {
@@ -207,6 +209,7 @@ export function storageDrawerComponent(data) {
             }
         },
         onPlace: ({ block, dimension }, { params }) => {
+            pipe.connectBlock(block, false)
             const type = params.type; // "1x1", "1x2", "2x2", "ender"
 
             const offsets = {
@@ -255,12 +258,12 @@ export function storageDrawerComponent(data) {
             const inv = new InventoryManager(inventoryEntity);
 
             for (let i = 1; i < 8; i++)
-                astraAPI.setItemSlot(new mc.ItemStack("rc_sd:air"), i + 5, inventoryEntity);
+                astraAPI.setItemSlot(new mc.ItemStack("rc_sd:air"), i + 4, inventoryEntity);
             const ui = new mc.ItemStack(
                 block.typeId.slice(0, -4) + (type === '1x1' ? "" : type === '2x2' ? "4" : block.typeId.slice(-1))
             );
 
-            inv.setSlot(5, ui);
+            inv.setSlot(4, ui);
 
             const selectedOffsets = offsets[type] ?? offsets["1x1"];
 
@@ -285,7 +288,57 @@ export function storageDrawerComponent(data) {
 
                 StorageQuantityScoreboard.addEntity(visualItem, 0);
             }
-        }
+        },
+        onBreak: ({ block, player, dimension }, { params }) => {
+            pipe.disconnectBlock(block, false)
+            const center = block.center();
+
+            const type = params.type;
+
+            const [inventoryEntity] = dimension.getEntities({
+                location: center,
+                type: `rc_sd:drawer_inventory`,
+                maxDistance: 0.5
+            });
+
+            if (!inventoryEntity) return;
+
+            const visualType = type === "1x1"
+                ? "rc_sd:normal_visual_item"
+                : "rc_sd:small_visual_item";
+
+            const visualItems = dimension.getEntities({
+                location: center,
+                type: visualType,
+                maxDistance: 0.5,
+                tags: [inventoryEntity.id]
+            });
+
+            for (const visualItem of visualItems) {
+                const visualInventory = visualItem
+                    .getComponent("minecraft:inventory")
+                    .container;
+
+                const itemInDrawer = visualInventory.getItem(0);
+                if (!itemInDrawer) continue;
+
+                const quantity = StorageQuantityScoreboard.get(visualItem);
+                if (quantity <= 0) continue;
+
+                dropDrawerItems(dimension, center, itemInDrawer, quantity);
+
+                StorageQuantityScoreboard.set(visualItem, 0);
+
+                visualInventory.setItem(0, undefined);
+
+                visualItem.runCommand(`replaceitem entity @s slot.weapon.mainhand 0 air`);
+
+                const visual = astraAPI.formatVisualNumber(0);
+                for (const [key, value] of Object.entries(visual)) {
+                    visualItem.setProperty(`rc_sd:${key}`, value);
+                }
+            }
+        },
     });
 }
 
@@ -307,6 +360,25 @@ function rotateOffsetByCardinal(offset, direction) {
 
         default:
             return { x, y, z };
+    }
+}
+
+function dropDrawerItems(dimension, location, itemStack, quantity) {
+    if (!itemStack || quantity <= 0) return;
+
+    const maxStack = itemStack.maxAmount ?? 64;
+
+    let remaining = quantity;
+
+    while (remaining > 0) {
+        const dropAmount = Math.min(maxStack, remaining);
+
+        const drop = itemStack.clone();
+        drop.amount = dropAmount;
+
+        dimension.spawnItem(drop, location);
+
+        remaining -= dropAmount;
     }
 }
 
@@ -385,13 +457,13 @@ export function afterHitComponent(data) {
     const slot = new FaceSelectionPlains(...slotAreas).getSelected(blockInView);
     if (slot === undefined) return;
 
-    //const lockKey = `${player.id}:${block.location.x},${block.location.y},${block.location.z}:${slot}`;
+    const lockKey = `${player.id}:${block.location.x},${block.location.y},${block.location.z}:${slot}`;
 
-    //if (drawerHitLock.has(lockKey)) return;
+    if (drawerHitLock.has(lockKey)) return;
 
-    //drawerHitLock.add(lockKey);
+    drawerHitLock.add(lockKey);
 
-    //mc.system.runTimeout(() => drawerHitLock.delete(lockKey), 3);
+    mc.system.runTimeout(() => drawerHitLock.delete(lockKey), 3);
 
     const [inventoryEntity] = dimension.getEntities({
         location: center,
@@ -686,6 +758,7 @@ function clearCompactVisuals(block, inventoryEntity) {
 
 mc.world.afterEvents.dataDrivenEntityTrigger.subscribe(({ entity }) => {
     if (!entity?.isValid) return;
+
     if (entity.hasTag('rc_sd:validation')) {
         const players = mc.world.getPlayers();
         for (const p of players) {
@@ -699,7 +772,8 @@ mc.world.afterEvents.dataDrivenEntityTrigger.subscribe(({ entity }) => {
     if (hasDifference) {
         const block = entity.dimension.getBlock(entity.location)
 
-        const config = block.getComponent("rc_sd:storage_drawer")?.customComponentParameters.params;
+        const config = block.getComponent("rc_sd:storage_drawer")?.customComponentParameters.params ??
+        block.getComponent("rc_sd:compact_drawer")?.customComponentParameters.params;;
         const type = config?.type; // "1x1", "1x2", "2x2", "ender"
         const amountPerSlot = config.amount_per_slot;
 
@@ -732,12 +806,11 @@ mc.world.afterEvents.dataDrivenEntityTrigger.subscribe(({ entity }) => {
             displayItem.nameTag = `§r§f${astraAPI.normalizeNumber(quantity)}/${astraAPI.normalizeNumber(maxQuantity)}`;
 
 
-
             astraAPI.setItemSlot(displayItem, inventorySlot, entity);
         }
     }
 
-    //entity.remove()
+    // sistema de funil
     {
         const delay = entity.getDynamicProperty('rc_sd:delay') ?? 0;
         const nextDelay = (delay + 1) % 8;

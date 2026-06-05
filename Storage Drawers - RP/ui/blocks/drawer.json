@@ -3,17 +3,19 @@
 
   "title_label": {
     "type": "label",
-    "offset": [0, 5],
-    "anchor_from": "top_middle",
-    "anchor_to": "top_middle",
+    "offset": [8, 5],
+    "anchor_from": "top_left",
+    "anchor_to": "top_left",
     "text": "$container_title",
     "color": "$title_text_color",
+    "text_alignment": "left",
     "layer": 4
   },
 
   "upgrade_label": {
     "type": "label",
-    "offset": [-57, 57],
+    "offset": [56, 9],
+    "font_scale_factor": 0.7,
     "anchor_from": "top_middle",
     "anchor_to": "top_middle",
     "text": "tile.rc_sd:upgrade.name",
@@ -136,7 +138,7 @@
     "size": [0, 0],
     "anchor_from": "center",
     "anchor_to": "center",
-    "grid_dimensions": [13, 1],
+    "grid_dimensions": [12, 1],
     "grid_item_template": "chest.chest_grid_item",
     "collection_name": "container_items",
 
@@ -144,97 +146,97 @@
       {
         "storage_slot_1@drawer.interactive_slot": {
           "$slot_grid_position": [0, 0],
-          "$slot_offset": [-72, -12]
+          "$slot_offset": [54, -7]
         }
       },
 
       {
         "storage_slot_2@drawer.interactive_slot": {
           "$slot_grid_position": [1, 0],
-          "$slot_offset": [-54, -12]
+          "$slot_offset": [54, -25]
         }
       },
 
       {
         "storage_slot_3@drawer.interactive_slot": {
           "$slot_grid_position": [2, 0],
-          "$slot_offset": [-36, -12]
+          "$slot_offset": [54, -43]
         }
       },
 
       {
         "storage_slot_4@drawer.interactive_slot": {
           "$slot_grid_position": [3, 0],
-          "$slot_offset": [-18, -12]
+          "$slot_offset": [54, -61]
         }
       },
-      {
-        "storage_slot_5@drawer.interactive_slot": {
-          "$slot_grid_position": [4, 0],
-          "$slot_offset": [0, -12]
-        }
-      },
+      //{
+      //  "storage_slot_5@drawer.interactive_slot": {
+      //    "$slot_grid_position": [4, 0],
+      //    "$slot_offset": [-72, -84]
+      //  }
+      //},
 
       {
         "drawer_icon@drawer.item_preview_slot": {
-          "$slot_grid_position": [5, 0],
-          "$slot_offset": [0, -49],
+          "$slot_grid_position": [4, 0],
+          "$slot_offset": [0, -36],
           "$renderer_size": [48, 48]
         }
       },
 
       {
         "preview_1x1@drawer.item_preview_slot": {
-          "$slot_grid_position": [6, 0],
-          "$slot_offset": [0, -49],
+          "$slot_grid_position": [5, 0],
+          "$slot_offset": [0, -36],
           "$renderer_size": [16, 16]
         }
       },
 
       {
         "preview_1x2_top@drawer.item_preview_slot": {
-          "$slot_grid_position": [7, 0],
-          "$slot_offset": [0, -61],
+          "$slot_grid_position": [6, 0],
+          "$slot_offset": [0, -48],
           "$renderer_size": [16, 16]
         }
       },
 
       {
         "preview_1x2_bottom@drawer.item_preview_slot": {
-          "$slot_grid_position": [8, 0],
-          "$slot_offset": [0, -40],
+          "$slot_grid_position": [7, 0],
+          "$slot_offset": [0, -27],
           "$renderer_size": [16, 16]
         }
       },
 
       {
         "preview_2x2_top_left@drawer.item_preview_slot": {
-          "$slot_grid_position": [9, 0],
-          "$slot_offset": [-10, -61],
+          "$slot_grid_position": [8, 0],
+          "$slot_offset": [-10, -48],
           "$renderer_size": [16, 16]
         }
       },
 
       {
         "preview_2x2_top_right@drawer.item_preview_slot": {
-          "$slot_grid_position": [10, 0],
-          "$slot_offset": [10, -61],
+          "$slot_grid_position": [9, 0],
+          "$slot_offset": [10, -48],
           "$renderer_size": [16, 16]
         }
       },
 
       {
         "preview_2x2_bottom_left@drawer.item_preview_slot": {
-          "$slot_grid_position": [11, 0],
-          "$slot_offset": [-10, -40],
+          "$slot_grid_position": [10, 0],
+          "$slot_offset": [-10, -27],
           "$renderer_size": [16, 16]
         }
       },
 
       {
         "preview_2x2_bottom_right@drawer.item_preview_slot": {
-          "$slot_grid_position": [12, 0],
-          "$slot_offset": [10, -40],
+          "$slot_grid_position": [11, 0],
+          "$slot_offset": [10, -27],
           "$renderer_size": [16, 16]
         }
       }
@@ -257,7 +259,7 @@
 
       {
         "inventory_label@crafting.inventory_label": {
-          "offset": [8, 89]
+          "offset": [8, 92]
         }
       },
 
@@ -270,54 +272,54 @@
       },
 
       {
-        "slot_6_name@drawer.slot_text": {
+        "slot_5_name@drawer.slot_text": {
+          "$index": 5,
+          "offset": [0, 57]
+        }
+      },
+
+      {
+        "slot_6_name@drawer.slot_mini_text": {
           "$index": 6,
           "offset": [0, 44]
         }
       },
-
       {
         "slot_7_name@drawer.slot_mini_text": {
           "$index": 7,
-          "offset": [0, 31]
-        }
-      },
-      {
-        "slot_8_name@drawer.slot_mini_text": {
-          "$index": 8,
-          "offset": [0, 52]
+          "offset": [0, 65]
         }
       },
 
       {
+        "slot_8_name@drawer.slot_mini_text": {
+          "$index": 8,
+          "offset": [-11, 44]
+        }
+      },
+      {
         "slot_9_name@drawer.slot_mini_text": {
           "$index": 9,
-          "offset": [-11, 31]
+          "offset": [11, 44]
         }
       },
       {
         "slot_10_name@drawer.slot_mini_text": {
           "$index": 10,
-          "offset": [11, 31]
+          "offset": [-11, 65]
         }
       },
       {
         "slot_11_name@drawer.slot_mini_text": {
           "$index": 11,
-          "offset": [-11, 52]
-        }
-      },
-      {
-        "slot_12_name@drawer.slot_mini_text": {
-          "$index": 12,
-          "offset": [11, 52]
+          "offset": [11, 65]
         }
       },
 
       {
         "toolbar_background@loom.toolbar_background": {
-          "size": [21, 21],
-          "offset": [0, -18],
+          "size": [25, 25],
+          "offset": [0, -22],
           "anchor_from": "top_right",
           "anchor_to": "top_right",
           "controls": [

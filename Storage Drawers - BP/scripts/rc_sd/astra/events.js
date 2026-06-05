@@ -8,6 +8,7 @@ import { storageDrawerComponent } from "./rc_sd/components/storageDrawer";
 import { compactDrawerComponent } from "./rc_sd/components/compactDrawer";
 import { drawerControllerComponent } from "./rc_sd/components/drawerController";
 import { pipeComponent } from "./rc_sd/components/pipe";
+import { wrenchComponent } from "./rc_sd/components/wrench";
 
 import { beforeDrawerBreakComponent, afterHitComponent } from "./rc_sd/components/storageDrawer";
 
@@ -16,6 +17,7 @@ export function startupEvent(data) {
     compactDrawerComponent(data);
     drawerControllerComponent(data);
     pipeComponent(data);
+    wrenchComponent(data);
 }
 
 export function playerBreakBlockEvent(data) {
@@ -29,32 +31,12 @@ export function entityHitBlockEvent(data) {
 const isFrontFace = (block, face) =>
     block.permutation.getState("minecraft:cardinal_direction") === face.toLowerCase();
 
-
-const pipeParts = new SelectionBoxes(
-    //center
-    { origin: [-4, 4, -4], size: [8, 8, 8] },
-
-    //north
-    { origin: [-4, 4, -8], size: [8, 8, 4] },
-
-    //south
-    { origin: [-4, 4, 4], size: [8, 8, 4] },
-
-    //east
-    { origin: [-8, 4, -4], size: [4, 8, 8] },
-
-    //west
-    { origin: [4, 4, -4], size: [4, 8, 8] },
-
-    //above
-    { origin: [-4, 12, -4], size: [8, 4, 8] },
-
-    //below
-    { origin: [-4, 0, -4], size: [8, 4, 8] },
-)
-
 export function runIntervalEvent() {
     for (const player of mc.world.getAllPlayers()) {
+
+        const equipment = player.getComponent("equippable");
+        const itemStack = equipment.getEquipment("Mainhand");
+
         const playerHead = player.getHeadLocation();
         const viewDirection = player.getViewDirection();
 
@@ -85,11 +67,6 @@ export function runIntervalEvent() {
         if (!blockInView) continue
 
         const block = blockInView.block
-
-        if (block.typeId === "rc_sd:pipe") {
-            const selectedPot = pipeParts.getSelected(blockInView.faceLocation);
-            //console.warn("selected part", selectedPot);
-        }
 
         //console.warn("block in view", block.typeId, "distance", distance);
 
@@ -137,12 +114,11 @@ export function runIntervalEvent() {
                 if (!player.isSneaking) {
                     entity.triggerEvent('rc_sd:remove_collision');
                     player.setPropertyOverrideForEntity(entity, 'rc_sd:selection', false)
-                } else {
+                } else if (player.isSneaking && itemStack?.typeId !== "rc_sd:wrench") {
                     entity.removeTag('rc_sd:validation')
                     entity.triggerEvent('rc_sd:set_block_collision');
                     player.setPropertyOverrideForEntity(entity, 'rc_sd:selection', true)
                 }
-
             }
         }
     }

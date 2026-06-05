@@ -1,0 +1,23 @@
+{
+  "format_version": "1.26.0",
+  "minecraft:item": {
+    "description": {
+      "identifier": "rc_sd:wrench",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "rc_sd:wrench": {},
+      "minecraft:icon": "rc_sd:wrench",
+      "minecraft:durability": {
+        "max_durability": 128
+      },
+      "minecraft:hand_equipped": true,
+      "minecraft:max_stack_size": 1,
+      "minecraft:damage": {
+        "value": 2
+      }
+    }
+  }
+}

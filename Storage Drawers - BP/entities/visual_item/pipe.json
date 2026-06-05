@@ -1,0 +1,62 @@
+{
+  "format_version": "1.20.41",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "rc_sd:pipe_visual_item",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": false,
+      "properties": {
+        "rc_sd:type_item": {
+          "client_sync": true,
+          "type": "int",
+          "default": 0,
+          "range": [0, 16]
+        }
+      }
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": ["rc_sd:visual_item"]
+      },
+      "minecraft:timer": {
+        "time": 0.5,
+        "looping": true,
+        "time_down_event": {
+          "event": "rc_sd:move",
+          "target": "self"
+        }
+      },
+      "minecraft:inventory": {
+        "additional_slots_per_strength": 0,
+        "can_be_siphoned_from": false,
+        "container_type": "inventory",
+        "inventory_size": 1,
+        "private": false,
+        "restrict_to_owner": false
+      },
+      "minecraft:collision_box": {
+        "height": 0,
+        "width": 0
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "cause": "all",
+            "deals_damage": false
+          }
+        ]
+      },
+      "minecraft:scale": {
+        "value": 0.6
+      }
+    },
+    "events": {
+      "rc_sd:move": {
+        "queue_command": {
+          "command": "scriptevent rc_sd:pipe_visual_item"
+        }
+      }
+    }
+  }
+}

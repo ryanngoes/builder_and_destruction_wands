@@ -30,7 +30,7 @@
       }
     },
     "components": {
-      "minecraft:display_name": "tile.rc_sd:acacia_drawer_1x2.name",
+      "minecraft:display_name": "%tile.rc_sd.acacia_drawer_1x2.name\n%rc_sd.identifier",
       "minecraft:movable": {
         "movement_type": "immovable"
       },

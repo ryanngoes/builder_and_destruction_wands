@@ -1,0 +1,42 @@
+{
+  "format_version": "1.20.41",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "rc_sd:pipe_visual_item",
+      "materials": {
+        "default": "entity_custom"
+      },
+      "textures": {
+        "default": "textures/rc/sd/blocks/air"
+      },
+      "geometry": {
+        "default": "geometry.rc_sd.visual_item"
+      },
+      "animations": {
+        "float_item": "animation.rc_sd.pipe_visual_item_float"
+
+      //"type_item": "controller.animation.rc_sd.type_item",
+      //"type_normal": "animation.rc_sd.item_type_normal",
+      //"type_block": "animation.rc_sd.item_type_block",
+      //"type_weapon": "animation.rc_sd.item_type_weapon",
+      //"type_misc": "animation.rc_sd.item_type_misc",
+      //"type_small": "animation.rc_sd.item_type_small",
+      //"type_beacon": "animation.rc_sd.item_type_beacon",
+      //"type_anvil": "animation.rc_sd.item_type_anvil",
+      //"type_chest": "animation.rc_sd.item_type_chest",
+      //"type_heavy": "animation.rc_sd.item_type_heavy",
+      //"type_fence": "animation.rc_sd.item_type_fence",
+      //"type_rod": "animation.rc_sd.item_type_rod",
+      //"type_dripstone": "animation.rc_sd.item_type_dripstone",
+      //"type_ssb": "animation.rc_sd.item_type_ssb"
+      },
+      "scripts": {
+        "animate": [
+        "float_item"
+        //, "type_item"
+      ]
+      },
+      "render_controllers": ["controller.render.default"]
+    }
+  }
+}

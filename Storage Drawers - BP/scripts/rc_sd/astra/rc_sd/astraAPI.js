@@ -10,6 +10,8 @@ import {
     system
 } from "@minecraft/server";
 
+import { getAllConnectedDrawers } from "./components/drawerController";
+
 import { getGroup, getVisualItem, getGroupData, getItemGroupData, getCompactSlotValue, getCompactTotalBase, updateCompactVisuals } from "./components/compactDrawer";
 
 /**
@@ -26,8 +28,51 @@ export function directionToNum(direction) {
     if (direction === "east") return 5;
 }
 
+export function moveItemFromContainers(
+  fromContainer,
+  fromSlot,
+  toContainer,
+  toSlot,
+  quantity
+) {
+  if (!fromContainer || !toContainer) return 0;
+  if (typeof quantity !== "number" || quantity <= 0) return 0;
+
+  const src = fromContainer.getItem(fromSlot);
+  if (!src) return 0;
+
+  // limita à quantidade disponível no slot
+  const toMove = Math.min(quantity | 0, src.amount);
+
+  // clona e ajusta a quantidade
+  const clone = src.clone();
+  clone.amount = toMove;
+
+  // coloca no destino (sobrescreve)
+  toContainer.setItem(toSlot, clone);
+
+  // desconta do slot de origem
+  const remaining = src.amount - toMove;
+  if (remaining > 0) {
+    const newSrc = src.clone();
+    newSrc.amount = remaining;
+    fromContainer.setItem(fromSlot, newSrc);
+  } else {
+    fromContainer.setItem(fromSlot, undefined); // limpa slot
+  }
+
+  return toMove;
+}
+
+
 export function addItemFromHopper(block, entity) {
-    if (!block?.isValid || !entity?.isValid) return;
+    if (!block?.isValid) return;
+
+    if (block.typeId === "rc_sd:drawer_controller") {
+        return addItemFromHopperController(block);
+    }
+
+    if (!entity?.isValid) return;
 
     const storageComponent = block.getComponent("rc_sd:storage_drawer");
     const compactComponent = block.getComponent("rc_sd:compact_drawer");
@@ -43,6 +88,142 @@ export function addItemFromHopper(block, entity) {
     }
 
     return addItemFromHopperNormal(block, entity, config);
+}
+
+function addItemFromHopperController(controllerBlock) {
+    const dimension = controllerBlock.dimension;
+    let connectedDrawers;
+
+    for (const face of ["above", "east", "south", "west", "north"]) {
+        const hopperBlock = controllerBlock[face]?.();
+        if (!isValidInputHopper(hopperBlock, face)) continue;
+
+        const hopperInventory = hopperBlock.getComponent("minecraft:inventory")?.container;
+        if (!hopperInventory) continue;
+
+        connectedDrawers ??= getAllConnectedDrawers(controllerBlock, 18);
+
+        for (let hopperSlot = 0; hopperSlot < hopperInventory.size; hopperSlot++) {
+            const hopperItem = hopperInventory.getItem(hopperSlot);
+            if (!hopperItem) continue;
+
+            if (!tryAddHopperItemToControllerDrawers(
+                dimension,
+                connectedDrawers,
+                hopperItem
+            )) continue;
+
+            if (hopperItem.amount > 1) {
+                hopperItem.amount--;
+                hopperInventory.setItem(hopperSlot, hopperItem);
+            } else {
+                hopperInventory.setItem(hopperSlot, undefined);
+            }
+
+            return;
+        }
+    }
+}
+
+function tryAddHopperItemToControllerDrawers(dimension, drawerLocations, hopperItem) {
+    for (const location of drawerLocations) {
+        const drawer = dimension.getBlock(location);
+        if (!drawer?.isValid) continue;
+
+        const config = drawer
+            .getComponent("rc_sd:storage_drawer")
+            ?.customComponentParameters
+            ?.params;
+
+        if (!config) continue;
+
+        const type = config.type;
+        const center = drawer.center();
+
+        const [inventoryEntity] = dimension.getEntities({
+            location: center,
+            type: "rc_sd:drawer_inventory",
+            maxDistance: 0.5
+        });
+
+        const drawerInventory = inventoryEntity
+            ?.getComponent("minecraft:inventory")
+            ?.container;
+
+        if (!drawerInventory) continue;
+
+        const maxQuantity = DrawerInventoryManager.getStorageLimit(
+            config.amount_per_slot,
+            drawerInventory
+        );
+
+        const visualItems = dimension.getEntities({
+            location: center,
+            type: type === "1x1"
+                ? "rc_sd:normal_visual_item"
+                : "rc_sd:small_visual_item",
+            maxDistance: 0.5,
+            tags: [inventoryEntity.id]
+        });
+
+        for (const visualItem of visualItems) {
+            if (!visualItem?.isValid) continue;
+
+            const visualInventory = visualItem
+                .getComponent("minecraft:inventory")
+                ?.container;
+
+            const itemInDrawer = visualInventory?.getItem(0);
+
+            // Controller via hopper NÃO define item novo.
+            // Só aumenta quantidade de drawer que já tem item.
+            if (!itemInDrawer) continue;
+            if (itemInDrawer.typeId !== hopperItem.typeId) continue;
+            if (!compareItems(hopperItem, itemInDrawer)) continue;
+
+            const quantity = StorageQuantityScoreboard.get(visualItem);
+            if (quantity >= maxQuantity) continue;
+
+            const newQuantity = quantity + 1;
+
+            StorageQuantityScoreboard.set(visualItem, newQuantity);
+            syncDrawerVisual(type, visualItem, itemInDrawer, inventoryEntity, newQuantity, maxQuantity);
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function isValidInputHopper(hopperBlock, face) {
+    if (!hopperBlock || hopperBlock.typeId !== "minecraft:hopper") return false;
+
+    const states = hopperBlock.permutation.getAllStates();
+
+    return (
+        states["toggle_bit"] === false &&
+        states["facing_direction"] === directionToNum(invertFace(face))
+    );
+}
+
+function syncDrawerVisual(type, visualItem, itemInDrawer, inventoryEntity, quantity, maxQuantity) {
+    const displayItem = itemInDrawer.clone();
+
+    displayItem.amount = 1;
+    displayItem.nameTag = `§r§f${normalizeNumber(quantity)}/${normalizeNumber(maxQuantity)}`;
+
+    setItemSlot(
+        displayItem,
+        getInventorySlot(type, Number(visualItem.nameTag)),
+        inventoryEntity
+    );
+
+    const visual = formatVisualNumber(quantity);
+
+    for (const key in visual) {
+        visualItem.setProperty(`rc_sd:${key}`, visual[key]);
+    }
 }
 
 function addItemFromHopperNormal(block, entity, config) {
@@ -400,45 +581,16 @@ export function trueFace(block, face, stateName) {
 }
 
 export function setPermutation(block, stateAdd, stateValue) {
-    const result = block.permutation.getAllStates();
-    result[stateAdd] = stateValue;
-    block.setPermutation(BlockPermutation.resolve(block?.typeId, result));
-}
+  if (!block?.permutation) return;
 
-export function moveItemFromContainers(
-    fromContainer,
-    fromSlot,
-    toContainer,
-    toSlot,
-    quantity
-) {
-    if (!fromContainer || !toContainer) return 0;
-    if (typeof quantity !== "number" || quantity <= 0) return 0;
-
-    const src = fromContainer.getItem(fromSlot);
-    if (!src) return 0;
-
-    // limita à quantidade disponível no slot
-    const toMove = Math.min(quantity | 0, src.amount);
-
-    // clona e ajusta a quantidade
-    const clone = src.clone();
-    clone.amount = toMove;
-
-    // coloca no destino (sobrescreve)
-    toContainer.setItem(toSlot, clone);
-
-    // desconta do slot de origem
-    const remaining = src.amount - toMove;
-    if (remaining > 0) {
-        const newSrc = src.clone();
-        newSrc.amount = remaining;
-        fromContainer.setItem(fromSlot, newSrc);
-    } else {
-        fromContainer.setItem(fromSlot, undefined); // limpa slot
-    }
-
-    return toMove;
+  try {
+    const newPermutation = block.permutation.withState(stateAdd, stateValue);
+    block.setPermutation(newPermutation);
+  } catch (e) {
+    console.warn(
+      `Erro ao alterar state ${stateAdd} para ${stateValue} no bloco ${block.typeId}: ${e}`
+    );
+  }
 }
 
 const lastClickTimes = new Map();
@@ -514,7 +666,7 @@ function charToDigit(char) {
     return Number(char);
 }
 
-const watchedSlots = [0,1,2,3,4]; // slots que você quer observar
+const watchedSlots = [0, 1, 2, 3, 4]; // slots que você quer observar
 const previous = new Map();
 
 function getSlotKey(entityId, slot) {
@@ -879,7 +1031,7 @@ export class ItemTypeManager {
             return "item";
         }
 
-        if (this.isWeapon(id)) {
+        if (this.isWeapon(id) || id.includes("wrench")) {
             return "weapon";
         }
 
@@ -1310,7 +1462,7 @@ export class DrawerInventoryManager {
         return limit;
     }
 
-    static slotInventoryMap = Object.freeze({ "ender": [6], "1x1": [6], "1x2": [7, 8], "2x2": [9, 10, 11, 12], "compact": [7, 11, 12] });
+    static slotInventoryMap = Object.freeze({ "ender": [5], "1x1": [5], "1x2": [6, 7], "2x2": [8, 9, 10, 11], "compact": [6, 10, 11] });
     static listUpgrade = Object.freeze({ "rc_sd:copper_upgrade": 8, "rc_sd:gold_upgrade": 16, "rc_sd:diamond_upgrade": 24, "rc_sd:netherite_upgrade": 32 });
     static utilityUpgrade = Object.freeze(["rc_sd:void_upgrade"]);
 

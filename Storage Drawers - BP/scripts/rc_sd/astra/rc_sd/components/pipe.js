@@ -8,17 +8,16 @@ export function pipeComponent(data) {
     onTick: ({ block, dimension }, { params }) => {
       const pulls = getPullSides(block);
 
+      //console.warn(`pulls: ${pulls.join(", ")}`);
+
       for (const side of pulls) {
-        const pos = directionToPosition(block, side);
+        const targetBlock = block[side]()
 
-        const targetBlock = dimension.getBlock({
-          x: pos.x,
-          y: pos.y,
-          z: pos.z,
-        });
+        const pos = targetBlock.location
 
-        const inventory = targetBlock.getComponent("minecraft:inventory");
-        if (!inventory) continue;
+        //console.warn(`targetBlock: ${targetBlock.typeId} at ${pos.x},${pos.y},${pos.z}`);
+
+        const inventory = targetBlock.getComponent("minecraft:inventory"); if (!inventory) continue;
 
         const config = blocksConfig(targetBlock);
         const outputSlots = config?.outputSlots ?? []; // fallback se não existir
@@ -27,22 +26,30 @@ export function pipeComponent(data) {
           const item = inventory.container.getItem(i);
           if (!item) continue;
 
-          const itmeType = API.getItemType(block, item);
-          const itemTypeNumber = API.typeToNumber(itmeType);
+          const itmeType = astraAPI.itemType(block, item);
+          const itemTypeNumber = astraAPI.typeToNumber(itmeType);
 
           const replace =
             itmeType === "fake"
               ? `rc_sd:${item.typeId.split(":")[1]}_item_fake`
               : item.typeId;
 
-          if (!findPathForItem(block, item)[0]) return;
+          const path = findPathForItem(block, item);
+
+          if (!path[0]) return;
+
 
           // spawn do item no centro do bloco de origem
-          const itemEntity = dimension.spawnEntity("rc_sd:item", {
+
+          const itemEntity = dimension.spawnEntity("rc_sd:pipe_visual_item", {
             x: targetBlock.center().x,
             y: pos.y + 0.2,
             z: targetBlock.center().z,
           });
+
+          itemEntity.setDynamicProperty('rc_sd:initial_block', targetBlock.location)
+
+          mc.system.runTimeout(() => dimension?.playSound("random.pop", block.center(), { pitch: 0.65, volume: 0.035 }), 5);
 
           const inventoryItem = itemEntity.getComponent(
             "minecraft:inventory"
@@ -51,15 +58,10 @@ export function pipeComponent(data) {
           const newItem = item.clone();
           newItem.amount = 1;
 
-          //if(itmeType === item)
-          //itemEntity.setProperty('rc_sd:type_item', itemTypeNumber)
-
-          mc.system.runTimeout(
-            () =>
-              itemEntity.runCommand(
-                `replaceitem entity @s slot.weapon.${itmeType === "item" ? "mainhand" : "offhand"
-                } 0 ${replace}`
-              ),
+          mc.system.runTimeout(() =>
+            itemEntity.runCommand(
+              `replaceitem entity @s slot.weapon.${itmeType === "item" ? "mainhand" : "offhand"
+              } 0 ${replace}`),
             1
           );
 
@@ -71,8 +73,10 @@ export function pipeComponent(data) {
             1
           );
 
+          //inventory.container.transferItem(i, inventory.container); // força atualização do slot
+
           moveEntity(itemEntity, targetBlock, block, {
-            speed: 2.7,
+            speed: 2.3,
             yOffset: -0.3,
           });
 
@@ -83,10 +87,12 @@ export function pipeComponent(data) {
     },
     beforeOnPlayerPlace: (event, { params }) => {
       event.cancel = true;
-      const block = event.block;
+      const { block, player } = event;
+      const InventoryManager = new astraAPI.InventoryManager(player);
       mc.system.runTimeout(() => {
         event.block.setPermutation(event.permutationToPlace);
         connectBlock(block, false);
+        InventoryManager.clearMainhand(1, false)
       });
     },
     onPlayerBreak: ({ block, dimension, brokenBlockPermutation }, { params }) => {
@@ -111,130 +117,154 @@ export function pipeComponent(data) {
   });
 }
 
-function getPullSides(block) {
-  const pulls = [];
-
-  for (const side of sides) {
-    if (block.permutation.getState(`rc_sd:${side}`) === "pull") {
-      pulls.push(side);
-    }
-  }
-  return pulls;
-}
-
-function directionToPosition(block, direction) {
-  const { x, y, z } = block.location;
-
-  switch (direction) {
-    case "north":
-      return { x, y, z: z - 1 };
-    case "south":
-      return { x, y, z: z + 1 };
-    case "west":
-      return { x: x - 1, y, z };
-    case "east":
-      return { x: x + 1, y, z };
-    case "above":
-      return { x, y: y + 1, z };
-    case "below":
-      return { x, y: y - 1, z };
-    default:
-      return { x, y, z }; // se não conhecer a direção, retorna a própria posição
-  }
-}
-
-function findPathForItem(startBlock, item) {
-  // "queue" aqui é uma FILA de caminhos.
-  // Cada elemento é um array: [bloco1, bloco2, bloco3...]
-  // Começamos com um caminho que só tem o bloco inicial.
-  const queue = [[startBlock]];
-
-  // Índice da fila (pra não usar shift(), que é mais pesado)
-  // qi aponta para o "próximo caminho a processar".
+function findPathForItem(startBlock, item, maxNodes = 512) {
+  const queue = [startBlock];
   let qi = 0;
 
-  // visited guarda os dutos já visitados, para não andar em loop infinito.
-  // Usamos uma string com x/y/z/dimension pra virar uma chave única.
-  const visited = new Set();
-  visited.add(
-    `${startBlock.x}/${startBlock.y}/${startBlock.z}/${startBlock.dimension.id}`
-  );
+  const parentMap = new Map(); // chave → chave do pai
+  const blockMap = new Map(); // chave → objeto bloco
 
-  // Enquanto ainda existirem caminhos para explorar...
+  const startKey = blockKey(startBlock);
+  parentMap.set(startKey, null);
+  blockMap.set(startKey, startBlock);
+
   while (qi < queue.length) {
-    // Pegamos o próximo caminho da FILA (FIFO).
-    // Isso faz a busca ser BFS: primeiro explora os mais curtos.
-    const currentPath = queue[qi++];
+    if (qi >= maxNodes) return [];
 
-    // O bloco atual é o último do caminho.
-    const currentBlock = currentPath[currentPath.length - 1];
+    const currentBlock = queue[qi++];
+    const currentKey = blockKey(currentBlock);
 
-    // Testamos todos os lados possíveis (north/south/east/west/above/below)
     for (const face of sides) {
-      // Se o bloco atual é um duto e esse lado está marcado como "pull",
-      // significa que esse lado é ENTRADA (puxa item do vizinho).
-      // Então a gente NÃO deve mandar o item por esse lado.
-      if (isItemduct(currentBlock) && isFacePull(currentBlock, face)) continue;
+      if (isItemduct(currentBlock) && isFaceBlocked(currentBlock, face)) continue;
 
-      // Pega o bloco vizinho nessa face.
-      const neighbor = currentBlock[face]?.();
-      if (!neighbor) continue;
-
-      // Chave única do vizinho (pra controlar visited).
-      const key = `${neighbor.x}/${neighbor.y}/${neighbor.z}/${neighbor.dimension.id}`;
-
-      // Se já visitamos esse bloco/duto, pula pra evitar loop.
-      if (visited.has(key)) continue;
-
-      // Face oposta (ex.: north <-> south) para checar o "pull" no vizinho.
-      const opp = racoAPI.invertFace[face];
-
-      // Se o vizinho é um duto e a face oposta dele é "pull",
-      // significa que esse vizinho está puxando do bloco atual.
-      // Logo não faz sentido empurrar item pra lá (fluxo contrário).
-      if (isItemduct(neighbor) && isFacePull(neighbor, opp)) continue;
-
-      // Se o vizinho for um container (baú/máquina/etc)...
-      if (containerBlock.includes(neighbor.typeId)) {
-        // Evita considerar o próprio bloco inicial como destino.
-        // (Caso startBlock também seja container em algumas situações)
-        const isSame =
-          neighbor.location.x === startBlock.location.x &&
-          neighbor.location.y === startBlock.location.y &&
-          neighbor.location.z === startBlock.location.z &&
-          neighbor.dimension.id === startBlock.dimension.id;
-
-        // Se NÃO for o mesmo bloco e o container puder aceitar o item,
-        // então achamos um destino válido e retornamos o caminho completo.
-        // Como é BFS, esse será o caminho MAIS CURTO encontrado até um destino válido.
-        if (!isSame && canAcceptItem(neighbor, item)) {
-          return [...currentPath, neighbor];
-        }
+      let neighbor;
+      try {
+        neighbor = currentBlock[face]?.();
+      } catch {
+        continue; // bloco fora do chunk carregado
       }
 
-      // Se o vizinho for um duto, continuamos expandindo a busca por ele.
-      if (isItemduct(neighbor)) {
-        // Marca como visitado NO MOMENTO em que entra na fila,
-        // isso evita enfileirar o mesmo duto várias vezes por caminhos diferentes.
-        visited.add(key);
+      if (!neighbor) continue;
 
-        // Enfileira um novo caminho: caminho atual + vizinho
-        queue.push([...currentPath, neighbor]);
+      const neighborKey = blockKey(neighbor);
+      if (parentMap.has(neighborKey)) continue;
+
+      const opp = astraAPI.invertFace[face];
+      if (isItemduct(neighbor) && isFaceBlocked(neighbor, opp)) continue;
+
+      if (containerBlock.includes(neighbor.typeId)) {
+        if (neighborKey !== startKey && canAcceptItem(neighbor, item)) {
+          parentMap.set(neighborKey, currentKey);
+          blockMap.set(neighborKey, neighbor);
+          return buildPath(parentMap, blockMap, neighborKey);
+        }
+        continue; // container inválido não expande
+      }
+
+      if (isItemduct(neighbor)) {
+        parentMap.set(neighborKey, currentKey);
+        blockMap.set(neighborKey, neighbor);
+        queue.push(neighbor);
       }
     }
   }
 
-  // Se a fila acabou e não encontramos container válido, não existe caminho.
   return [];
 }
 
-function isItemduct(block) {
-  return block?.typeId === "rc_sd:glass_pipe";
+function reFindPathForItem(startBlock, targetLocation, item, maxNodes = 512) {
+  const queue = [startBlock];
+  let qi = 0;
+
+  const parentMap = new Map();
+  const blockMap = new Map();
+
+  const startKey = blockKey(startBlock);
+  parentMap.set(startKey, null);
+  blockMap.set(startKey, startBlock);
+
+  const initialBlock = startBlock.dimension.getBlock(targetLocation);
+
+  const targetKey = blockKey(initialBlock);
+
+  while (qi < queue.length) {
+    if (qi >= maxNodes) return [];
+
+    const currentBlock = queue[qi++];
+    const currentKey = blockKey(currentBlock);
+
+    for (const face of sides) {
+      if (isItemduct(currentBlock) && isFaceImpassable(currentBlock, face)) continue;
+
+      let neighbor;
+      try {
+        neighbor = currentBlock[face]?.();
+      } catch {
+        continue;
+      }
+
+      if (!neighbor) continue;
+
+      const neighborKey = blockKey(neighbor);
+      if (parentMap.has(neighborKey)) continue;
+
+      // ✅ Verificação do target acontece para qualquer bloco vizinho
+      if (neighborKey === targetKey) {
+        if (neighbor.typeId === "minecraft:air" || !containerBlock.includes(neighbor.typeId)) return [];
+        parentMap.set(neighborKey, currentKey);
+        blockMap.set(neighborKey, neighbor);
+        return buildPath(parentMap, blockMap, neighborKey);
+      }
+
+      // Containers que não são o target: não expande
+      if (containerBlock.includes(neighbor.typeId)) {
+        continue;
+      }
+
+      // Só expande se for duto
+      if (isItemduct(neighbor)) {
+        parentMap.set(neighborKey, currentKey);
+        blockMap.set(neighborKey, neighbor);
+        queue.push(neighbor);
+      }
+    }
+  }
+
+  return [];
 }
 
-function isFacePull(block, face) {
+function blockKey(block) {
+  const { x, y, z } = block.location;
+  return `${x}/${y}/${z}/${block.dimension.id}`;
+}
+
+function buildPath(parentMap, blockMap, endKey) {
+  const path = [];
+  let key = endKey;
+  while (key !== null) {
+    path.push(blockMap.get(key));
+    key = parentMap.get(key);
+  }
+  return path.reverse();
+}
+
+function isItemduct(block) {
+  return block?.typeId === "rc_sd:pipe";
+}
+
+function isFaceBlocked(block, face) {
   try {
-    return block?.permutation?.getState?.(`rc_sd:${face}`) === "pull";
+    const state = block?.permutation?.getState?.(`rc_sd:${face}`);
+    return state === "pull" || state === "false";
+  } catch {
+    return false;
+  }
+}
+
+function isFaceImpassable(block, face) {
+  try {
+    const state = block?.permutation?.getState?.(`rc_sd:${face}`);
+    return state === "false";
   } catch {
     return false;
   }
@@ -243,15 +273,18 @@ function isFacePull(block, face) {
 const faces = ["above", "below", "north", "south", "west", "east"];
 
 export function connectBlock(block, once = false) {
-  let found = false
-  for (const face of faces) {
-    const faceBlock = block[face]()
+  let found = false;
 
-    const blockProperty = blocksConfig(block)?.faces?.[face]
+  for (const face of faces) {
+    const faceBlock = block[face]();
+
+    const stateName = `rc_sd:${face}`;
+    const currentState = block.permutation.getState(stateName);
+
+    const blockProperty = blocksConfig(block)?.faces?.[face];
 
     const neighborFace = astraAPI.invertFace(face);
 
-    const blockType = blocksConfig(faceBlock)?.type;
     const blockFaceProperty =
       blocksConfig(faceBlock)?.faces?.[
       astraAPI.trueFace(faceBlock, neighborFace)
@@ -266,18 +299,23 @@ export function connectBlock(block, once = false) {
 
     if (hasCommonProperty) {
       if (block?.typeId.endsWith("pipe")) {
-        astraAPI.setPermutation(block, `rc_sd:${face}`, "true");
+        if (currentState !== "pull") {
+          astraAPI.setPermutation(block, stateName, "true");
+        }
       }
+
       if (!once) {
-        connectBlock(faceBlock, true)
+        connectBlock(faceBlock, true);
       }
     } else if (block?.typeId.includes("pipe")) {
-      astraAPI.setPermutation(block, `rc_sd:${face}`, "false")
-    };
+      if (currentState !== "pull") {
+        astraAPI.setPermutation(block, stateName, "false");
+      }
+    }
   }
 }
 
-function disconnectBlock(block, once) {
+export function disconnectBlock(block, once) {
   const faces = ["above", "below", "north", "south", "west", "east"];
 
   for (const face of faces) {
@@ -310,36 +348,55 @@ function disconnectBlock(block, once) {
 
 mc.system.afterEvents.scriptEventReceive.subscribe(
   ({ id, sourceEntity: entity, message }) => {
-    if (id == "rc_sd:move" && entity) {
+    if (id == "rc_sd:pipe_visual_item") {
+      if (!entity?.isValid) return;
+
       const block = entity.dimension.getBlock(entity.location);
+      //console.warn(block.typeId)
       const inventory = entity.getComponent("minecraft:inventory");
       const container = inventory.container;
       const item = container.getItem(0);
       const path = findPathForItem(block, item);
-      if (path[1]) {
+      const rePath = reFindPathForItem(block, entity.getDynamicProperty('rc_sd:initial_block'), item);
+      if (block.typeId === "minecraft:air") {
+        block.dimension.spawnItem(item, block.center());
+        entity.remove();
+      }
+      if (path[1] && entity?.isValid) {
         const nextBlock = entity.dimension.getBlock({
           x: path[1].x,
           y: path[1].y,
           z: path[1].z,
         });
-        //console.warn(JSON.stringify(path))
-        moveEntity(entity, block, nextBlock, { speed: 2.5, yOffset: -0.3 });
-        if (block.typeId === "minecraft:air") {
-          block.dimension.spawnItem(item, block.center());
-          entity.remove();
-        }
-        if (containerBlock.includes(nextBlock.typeId)) {
-          mc.system.runTimeout(() => {
+        moveEntity(entity, block, nextBlock, { speed: 2.3, yOffset: -0.3 });
 
-            const inventoryBlock = nextBlock.getComponent(
-              "minecraft:inventory"
-            );
-            const containerBlock = inventoryBlock.container;
-            containerBlock.addItem(item);
+        if (containerBlock.includes(block.typeId)) {
+          const inventoryBlock = block.getComponent(
+            "minecraft:inventory"
+          );
+          const containerBlock = inventoryBlock.container;
+          const added = containerBlock.addItem(item);
+          if (entity.isValid)
             entity?.remove();
-          }, 10);
         }
-      } else console.warn("nao tem ");
+      } else {
+        if (!entity?.isValid) return
+        if (containerBlock.includes(block.typeId)) {
+          const inventoryBlock = block.getComponent(
+            "minecraft:inventory"
+          );
+          const containerBlock = inventoryBlock.container;
+          const added = containerBlock.addItem(item);
+          entity?.remove();
+        } else if (rePath[1]) {
+          const nextBlock = entity.dimension.getBlock({
+            x: rePath[1].x,
+            y: rePath[1].y,
+            z: rePath[1].z,
+          });
+          moveEntity(entity, block, nextBlock, { speed: 2.3, yOffset: -0.3 });
+        }
+      }
     }
   }
 );
@@ -427,6 +484,21 @@ function canAcceptItem(targetBlock, item) {
   return false;
 }
 
+function getPullSides(block) {
+  const pulls = [];
+
+  for (const side of sides) {
+    if (block.permutation.getState(`rc_sd:${side}`) === "pull") {
+      pulls.push(side);
+    }
+  }
+  return pulls;
+}
+
+function isEntrable(block) {
+  return containerBlock.includes(block?.typeId) || blocksConfig(block)?.faces;
+}
+
 export const containerBlock = [
   "minecraft:chest",
   "minecraft:furnace",
@@ -444,104 +516,71 @@ function getAllSlotsQuantity(block) {
   return Array.from({ length: container.size }, (_, i) => i);
 }
 
+const itemPipeFaces = {
+  above: ["itemPipe"],
+  below: ["itemPipe"],
+  north: ["itemPipe"],
+  south: ["itemPipe"],
+  west: ["itemPipe"],
+  east: ["itemPipe"],
+};
+
+const drawerFaces = {
+  north: ["itemPipe"],
+  south: ["itemPipe"],
+  east: ["itemPipe"],
+  west: ["itemPipe"],
+  above: ["itemPipe"],
+  below: ["itemPipe"],
+};
+
 export const blocksConfig = (block) => {
   const typeId = typeof block === "string" ? block : block.typeId;
 
+  // pega qualquer drawer automaticamente
+  if (typeId.startsWith("rc_sd:") && typeId.includes("_drawer_")) {
+    return {
+      faces: drawerFaces,
+      outputSlots: getAllSlotsQuantity(block),
+      inputSlots: getAllSlotsQuantity(block),
+    };
+  }
+
   const map = {
     "minecraft:chest": {
-      faces: {
-        above: ["itemPipe"],
-        below: ["itemPipe"],
-        north: ["itemPipe"],
-        south: ["itemPipe"],
-        west: ["itemPipe"],
-        east: ["itemPipe"],
-      },
+      faces: itemPipeFaces,
       outputSlots: getAllSlotsQuantity(block),
       inputSlots: getAllSlotsQuantity(block),
     },
 
     "minecraft:furnace": {
-      faces: {
-        above: ["itemPipe"],
-        below: ["itemPipe"],
-        north: ["itemPipe"],
-        south: ["itemPipe"],
-        west: ["itemPipe"],
-        east: ["itemPipe"],
-      },
+      faces: itemPipeFaces,
       outputSlots: [2],
       inputSlots: [0],
     },
 
     "minecraft:lit_furnace": {
-      faces: {
-        above: ["itemPipe"],
-        below: ["itemPipe"],
-        north: ["itemPipe"],
-        south: ["itemPipe"],
-        west: ["itemPipe"],
-        east: ["itemPipe"],
-      },
+      faces: itemPipeFaces,
       outputSlots: [2],
       inputSlots: [0],
     },
 
     "rc_sd:pipe": {
-      faces: {
-        above: ["itemPipe"],
-        below: ["itemPipe"],
-        north: ["itemPipe"],
-        south: ["itemPipe"],
-        west: ["itemPipe"],
-        east: ["itemPipe"],
-      },
+      faces: itemPipeFaces,
     },
 
     "minecraft:barrel": {
-      faces: {
-        above: ["itemPipe"],
-        below: ["itemPipe"],
-        north: ["itemPipe"],
-        south: ["itemPipe"],
-        west: ["itemPipe"],
-        east: ["itemPipe"],
-      },
+      faces: itemPipeFaces,
       outputSlots: getAllSlotsQuantity(block),
       inputSlots: getAllSlotsQuantity(block),
     },
 
     "minecraft:hopper": {
-      faces: {
-        above: ["itemPipe"],
-        below: ["itemPipe"],
-        north: ["itemPipe"],
-        south: ["itemPipe"],
-        west: ["itemPipe"],
-        east: ["itemPipe"],
-      },
+      faces: itemPipeFaces,
     },
 
     "minecraft:dispenser": {
-      faces: {
-        above: ["itemPipe"],
-        below: ["itemPipe"],
-        north: ["itemPipe"],
-        south: ["itemPipe"],
-        west: ["itemPipe"],
-        east: ["itemPipe"],
-      },
-    },
-
-    "minecraft:diamond_block": {
-      faces: {
-        north: ["itemduct"],
-        south: ["itemduct"],
-        east: ["itemduct"],
-        west: ["itemduct"],
-        above: ["itemduct"],
-        below: ["itemduct"],
-      },
+      faces: itemPipeFaces,
     },
   };
 
