@@ -7,8 +7,8 @@ import SelectionBoxes from "./rc_sd/components/boxSelection";
 import { storageDrawerComponent } from "./rc_sd/components/storageDrawer";
 import { compactDrawerComponent } from "./rc_sd/components/compactDrawer";
 import { drawerControllerComponent } from "./rc_sd/components/drawerController";
-import { pipeComponent } from "./rc_sd/components/pipe";
-import { wrenchComponent } from "./rc_sd/components/wrench";
+import { pipeComponent, connectBlock, disconnectBlock } from "./rc_sd/components/pipe";
+import { wrenchComponent, containerBlock } from "./rc_sd/components/wrench";
 
 import { beforeDrawerBreakComponent, afterHitComponent } from "./rc_sd/components/storageDrawer";
 
@@ -26,6 +26,20 @@ export function playerBreakBlockEvent(data) {
 
 export function entityHitBlockEvent(data) {
     afterHitComponent(data);
+}
+
+export function playerBreakBlockAfterEvent(data) {
+    const { brokenBlockPermutation, block } = data
+    if (containerBlock.includes(brokenBlockPermutation.type.id)){
+        disconnectBlock(block, false)
+    }
+}
+
+export function playerPlaceBlockAfterEvent(data) {
+    const { block } = data
+    if (containerBlock.includes(block.typeId)){
+        disconnectBlock(block, false)
+    }
 }
 
 const isFrontFace = (block, face) =>

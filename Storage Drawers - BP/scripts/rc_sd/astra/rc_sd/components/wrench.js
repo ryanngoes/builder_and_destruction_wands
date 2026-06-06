@@ -1,18 +1,19 @@
 import * as mc from "@minecraft/server";
+import * as astraAPI from "../astraAPI.js";
 
 export function setPermutation(block, stateAdd, stateValue) {
-    const result = block.permutation.getAllStates();
-    result[stateAdd] = stateValue;
-    block.setPermutation(mc.BlockPermutation.resolve(block?.typeId, result));
+  const result = block.permutation.getAllStates();
+  result[stateAdd] = stateValue;
+  block.setPermutation(mc.BlockPermutation.resolve(block?.typeId, result));
 }
 
 export function invertFace(face) {
-    if (face == 'above') return 'below'
-    if (face == 'below') return 'above'
-    if (face == 'north') return 'south'
-    if (face == 'south') return 'north'
-    if (face == 'west') return 'east'
-    if (face == 'east') return 'west'
+  if (face == 'above') return 'below'
+  if (face == 'below') return 'above'
+  if (face == 'north') return 'south'
+  if (face == 'south') return 'north'
+  if (face == 'west') return 'east'
+  if (face == 'east') return 'west'
 
 }
 
@@ -28,6 +29,7 @@ export const containerBlock = [
 export function wrenchComponent(data) {
   data.itemComponentRegistry.registerCustomComponent("rc_sd:wrench", {
     onUseOn: ({ itemStack, source: player, block, blockFace }, { params }) => {
+      const InventoryManager = new astraAPI.InventoryManager(player);
       const faceMap = {
         Up: "above",
         Down: "below",
@@ -56,6 +58,8 @@ export function wrenchComponent(data) {
         current === "pull" ? "false" : (current === "false" ? "true" : "pull")
       );
       player.playSound("item.spyglass.use", { pitch: 2 });
+
+      InventoryManager.damageEquipment("Mainhand", 1);
     },
   });
 };
@@ -75,7 +79,7 @@ function rotateBlock90(block) {
       block.setPermutation(perm.withState(cardinalState, next));
       return true;
     }
-  } catch {}
+  } catch { }
 
   // 2) Facing (às vezes inclui up/down)
   const facingState = "minecraft:facing_direction";
@@ -89,7 +93,7 @@ function rotateBlock90(block) {
       block.setPermutation(perm.withState(facingState, next));
       return true;
     }
-  } catch {}
+  } catch { }
 
   return false; // não tem state rotacionável
 }

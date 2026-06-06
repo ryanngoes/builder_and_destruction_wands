@@ -94,6 +94,8 @@ item.rc_sd:diamond_upgrade=§bDiamond Upgrade~LINEBREAK~§o§9Storage Drawers
 item.rc_sd:netherite_upgrade=§0Netherite Upgrade~LINEBREAK~§o§9Storage Drawers
 item.rc_sd:iron_upgrade=§7Iron Upgrade~LINEBREAK~§o§9Storage Drawers
 
+item.rc_sd:wrench=Wrench~LINEBREAK~§o§9Storage Drawers
+
 rc_sd:itemGroup=Storage Drawers
 
 pack.description=Don't have description

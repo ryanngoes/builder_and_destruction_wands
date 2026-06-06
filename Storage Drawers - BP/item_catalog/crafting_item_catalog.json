@@ -62,6 +62,7 @@
               "rc_sd:compact_drawer",
               "rc_sd:drawer_controller",
               "rc_sd:pipe",
+              "rc_sd:wrench",
 
               "rc_sd:copper_upgrade",
               "rc_sd:diamond_upgrade",

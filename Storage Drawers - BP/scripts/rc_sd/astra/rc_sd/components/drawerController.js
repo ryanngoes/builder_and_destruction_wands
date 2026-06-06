@@ -58,27 +58,27 @@ export function drawerControllerComponent(data) {
 
                     if (quantity < maxQuantity) {
                         const inventorySlot = astraAPI.getInventorySlot(type, slot)
-                        //if (itemStack) {
-                        //    if (quantity === 0 && drawer.permutation.getState("rc_sd:lock") === false) {
+                        if (itemStack) {
+                            if (quantity === 0 && drawer.permutation.getState("rc_sd:lock") === false) {
 
-                        //        const itemType = astraAPI.itemType(drawer, itemStack)
-                        //        const numberToType = astraAPI.typeToNumber(itemType);
+                                const itemType = astraAPI.itemType(drawer, itemStack)
+                                const numberToType = astraAPI.typeToNumber(itemType);
 
-                        //        const replaceId = itemType === "fake"
-                        //            ? `rc_sd:${itemStack.typeId.split(":")[1]}_item_fake`
-                        //            : itemStack.typeId;
+                                const replaceId = itemType === "fake"
+                                    ? `rc_sd:${itemStack.typeId.split(":")[1]}_item_fake`
+                                    : itemStack.typeId;
 
 
-                        //        mc.system.runTimeout(() => {
-                        //            visualItem.runCommand(`replaceitem entity @s slot.weapon.mainhand 0 ${replaceId}`);
-                        //        }, 1);
+                                mc.system.runTimeout(() => {
+                                    visualItem.runCommand(`replaceitem entity @s slot.weapon.mainhand 0 ${replaceId}`);
+                                }, 1);
 
-                        //        const newItem = itemStack.clone();
-                        //        newItem.amount = 1;
-                        //        visualItem.getComponent("inventory").container.setItem(0, newItem);
-                        //        visualItem.setProperty("rc_sd:visual_type", numberToType);
-                        //    }
-                        //}
+                                const newItem = itemStack.clone();
+                                newItem.amount = 1;
+                                visualItem.getComponent("inventory").container.setItem(0, newItem);
+                                visualItem.setProperty("rc_sd:visual_type", numberToType);
+                            }
+                        }
 
                         if (!player.hasTag("rc_sd:doubleClick")) {
                             itemInDrawer = visualItem.getComponent("minecraft:inventory").container.getItem(0);

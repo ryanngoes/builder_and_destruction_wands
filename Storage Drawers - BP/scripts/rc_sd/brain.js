@@ -15,6 +15,14 @@ mc.world.beforeEvents.playerBreakBlock.subscribe(data => {
     astra.playerBreakBlockEvent(data);
 })
 
+mc.world.afterEvents.playerBreakBlock.subscribe(data => {
+    astra.playerBreakBlockAfterEvent(data);
+})
+
+mc.world.afterEvents.playerPlaceBlock.subscribe(data => {
+    astra.playerPlaceBlockAfterEvent(data);
+})
+
 mc.system.runInterval(() => {
     astra.runIntervalEvent();
 });

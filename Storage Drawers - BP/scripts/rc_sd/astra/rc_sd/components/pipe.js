@@ -1,103 +1,154 @@
 import * as mc from "@minecraft/server";
 import * as astraAPI from "../astraAPI.js";
+import { StorageQuantityScoreboard } from "../astraAPI.js";
+import { pullItemFromDrawer, pushItemToDrawer, drawerCanAcceptItem, getDrawerEntities } from "./storageDrawer.js";
 
-const sides = ["north", "south", "east", "west", "above", "below"];
+// ─────────────────────────────────────────────
+// Constantes
+// ─────────────────────────────────────────────
+
+const SIDES = ["north", "south", "east", "west", "above", "below"];
+const MOVE_SPEED = 2.3;
+const MOVE_Y_OFFSET = -0.3;
+
+export const containerBlock = [
+  "minecraft:chest",
+  "minecraft:furnace",
+  "minecraft:lit_furnace",
+  "minecraft:barrel",
+  "minecraft:hopper",
+  "minecraft:dispenser",
+];
+
+/** Retorna true para qualquer drawer do mod */
+function isDrawer(block) {
+  const id = block?.typeId ?? "";
+  return id.startsWith("rc_sd:") && id.includes("_drawer_");
+}
+
+/** Retorna true para qualquer bloco que pode receber/enviar itens */
+function isContainer(block) {
+  return containerBlock.includes(block?.typeId) || isDrawer(block);
+}
+
+// ─────────────────────────────────────────────
+// Configuração de faces comuns (itemPipe)
+// ─────────────────────────────────────────────
+
+const itemPipeFaces = Object.fromEntries(SIDES.map((s) => [s, ["itemPipe"]]));
+
+export const blocksConfig = (block) => {
+  const typeId = typeof block === "string" ? block : block?.typeId;
+  if (!typeId) return undefined;
+
+  if (typeId.startsWith("rc_sd:") && typeId.includes("_drawer_")) {
+    return {
+      faces: itemPipeFaces,
+      outputSlots: getAllSlotsQuantity(block),
+      inputSlots: getAllSlotsQuantity(block),
+    };
+  }
+
+  const allSlots = getAllSlotsQuantity(block);
+
+  const map = {
+    "minecraft:chest": { faces: itemPipeFaces, outputSlots: allSlots, inputSlots: allSlots },
+    "minecraft:furnace": { faces: itemPipeFaces, outputSlots: [2], inputSlots: [0] },
+    "minecraft:lit_furnace": { faces: itemPipeFaces, outputSlots: [2], inputSlots: [0] },
+    "rc_sd:pipe": { faces: itemPipeFaces },
+    "minecraft:barrel": { faces: itemPipeFaces, outputSlots: allSlots, inputSlots: allSlots },
+    "minecraft:hopper": { faces: itemPipeFaces },
+    "minecraft:dispenser": { faces: itemPipeFaces },
+  };
+
+  return map[typeId];
+};
+
+// ─────────────────────────────────────────────
+// Componente principal do pipe
+// ─────────────────────────────────────────────
 
 export function pipeComponent(data) {
   data.blockComponentRegistry.registerCustomComponent("rc_sd:pipe", {
-    onTick: ({ block, dimension }, { params }) => {
+
+    onTick: ({ block, dimension }) => {
       const pulls = getPullSides(block);
 
-      //console.warn(`pulls: ${pulls.join(", ")}`);
-
       for (const side of pulls) {
-        const targetBlock = block[side]()
+        const targetBlock = block[side]();
 
-        const pos = targetBlock.location
+        // ── Drawer: usa a API própria do drawer ──
+        if (isDrawer(targetBlock)) {
+          const drawerData = getDrawerEntities(targetBlock);
+          if (!drawerData) continue;
 
-        //console.warn(`targetBlock: ${targetBlock.typeId} at ${pos.x},${pos.y},${pos.z}`);
+          let slotIndex = -1;
+          let drawerItem = null;
 
-        const inventory = targetBlock.getComponent("minecraft:inventory"); if (!inventory) continue;
+          for (const vi of drawerData.visualItems) {
+            if (!vi?.isValid) continue;
+            const qty = StorageQuantityScoreboard.get(vi);
+            if (qty <= 0) continue;
+            const it = vi.getComponent("minecraft:inventory")?.container?.getItem(0);
+            if (it) { slotIndex = Number(vi.nameTag); drawerItem = it; break; }
+          }
+
+          if (slotIndex < 0 || !drawerItem) continue;
+
+          const path = findPathForItem(block, drawerItem);
+          if (!path[0]) continue;
+
+          const pulled = pullItemFromDrawer(targetBlock, slotIndex);
+          if (!pulled) continue;
+
+          spawnPipeVisual(dimension, pulled, targetBlock, block);
+          continue;
+        }
+
+        // ── Container normal (chest, furnace, barrel…) ──
+        const inventory = targetBlock.getComponent("minecraft:inventory");
+        if (!inventory) continue;
 
         const config = blocksConfig(targetBlock);
-        const outputSlots = config?.outputSlots ?? []; // fallback se não existir
+        const outputSlots = config?.outputSlots ?? [];
 
         for (const i of outputSlots) {
           const item = inventory.container.getItem(i);
           if (!item) continue;
 
-          const itmeType = astraAPI.itemType(block, item);
-          const itemTypeNumber = astraAPI.typeToNumber(itmeType);
-
-          const replace =
-            itmeType === "fake"
-              ? `rc_sd:${item.typeId.split(":")[1]}_item_fake`
-              : item.typeId;
-
           const path = findPathForItem(block, item);
+          if (!path[0]) continue;
 
-          if (!path[0]) return;
+          if (item.amount > 1) {
+            const remaining = item.clone();
+            remaining.amount = item.amount - 1;
+            inventory.container.setItem(i, remaining);
+          } else {
+            inventory.container.setItem(i, undefined);
+          }
 
-
-          // spawn do item no centro do bloco de origem
-
-          const itemEntity = dimension.spawnEntity("rc_sd:pipe_visual_item", {
-            x: targetBlock.center().x,
-            y: pos.y + 0.2,
-            z: targetBlock.center().z,
-          });
-
-          itemEntity.setDynamicProperty('rc_sd:initial_block', targetBlock.location)
-
-          mc.system.runTimeout(() => dimension?.playSound("random.pop", block.center(), { pitch: 0.65, volume: 0.035 }), 5);
-
-          const inventoryItem = itemEntity.getComponent(
-            "minecraft:inventory"
-          );
-          const container = inventoryItem.container;
-          const newItem = item.clone();
-          newItem.amount = 1;
-
-          mc.system.runTimeout(() =>
-            itemEntity.runCommand(
-              `replaceitem entity @s slot.weapon.${itmeType === "item" ? "mainhand" : "offhand"
-              } 0 ${replace}`),
-            1
-          );
-
-          astraAPI.moveItemFromContainers(
-            inventory.container,
-            i,
-            container,
-            0,
-            1
-          );
-
-          //inventory.container.transferItem(i, inventory.container); // força atualização do slot
-
-          moveEntity(itemEntity, targetBlock, block, {
-            speed: 2.3,
-            yOffset: -0.3,
-          });
-
+          spawnPipeVisual(dimension, item, targetBlock, block);
           break;
         }
       }
-
     },
-    beforeOnPlayerPlace: (event, { params }) => {
+
+    beforeOnPlayerPlace: (event) => {
       event.cancel = true;
       const { block, player } = event;
       const InventoryManager = new astraAPI.InventoryManager(player);
       mc.system.runTimeout(() => {
         event.block.setPermutation(event.permutationToPlace);
         connectBlock(block, false);
-        InventoryManager.clearMainhand(1, false)
+        InventoryManager.clearMainhand(1, false);
+        block.dimension.playSound('dig.stone', block.center(), {pitch: 1.25})
       });
     },
-    onPlayerBreak: ({ block, dimension, brokenBlockPermutation }, { params }) => {
-      disconnectBlock(block, false)
+
+    onPlayerBreak: ({ block, dimension }) => {
+      disconnectBlock(block, false);
       const center = block.center();
+
       const items = dimension.getEntities({
         location: center,
         maxDistance: 0.8,
@@ -105,24 +156,23 @@ export function pipeComponent(data) {
       });
 
       for (const item of items) {
-        const inventory = item.getComponent("minecraft:inventory");
-        const drop = inventory.container.getItem(0);
-
-        dimension.spawnItem(drop, center);
-
+        const drop = item.getComponent("minecraft:inventory")?.container?.getItem(0);
+        if (drop) dimension.spawnItem(drop, center);
         item.remove();
       }
-
     },
   });
 }
 
+// ─────────────────────────────────────────────
+// BFS: encontra caminho até container que aceita o item
+// ─────────────────────────────────────────────
+
 function findPathForItem(startBlock, item, maxNodes = 512) {
   const queue = [startBlock];
   let qi = 0;
-
-  const parentMap = new Map(); // chave → chave do pai
-  const blockMap = new Map(); // chave → objeto bloco
+  const parentMap = new Map();
+  const blockMap = new Map();
 
   const startKey = blockKey(startBlock);
   parentMap.set(startKey, null);
@@ -134,7 +184,7 @@ function findPathForItem(startBlock, item, maxNodes = 512) {
     const currentBlock = queue[qi++];
     const currentKey = blockKey(currentBlock);
 
-    for (const face of sides) {
+    for (const face of SIDES) {
       if (isItemduct(currentBlock) && isFaceBlocked(currentBlock, face)) continue;
 
       let neighbor;
@@ -143,7 +193,6 @@ function findPathForItem(startBlock, item, maxNodes = 512) {
       } catch {
         continue; // bloco fora do chunk carregado
       }
-
       if (!neighbor) continue;
 
       const neighborKey = blockKey(neighbor);
@@ -152,13 +201,13 @@ function findPathForItem(startBlock, item, maxNodes = 512) {
       const opp = astraAPI.invertFace[face];
       if (isItemduct(neighbor) && isFaceBlocked(neighbor, opp)) continue;
 
-      if (containerBlock.includes(neighbor.typeId)) {
+      if (containerBlock.includes(neighbor.typeId) || isDrawer(neighbor)) {
         if (neighborKey !== startKey && canAcceptItem(neighbor, item)) {
           parentMap.set(neighborKey, currentKey);
           blockMap.set(neighborKey, neighbor);
           return buildPath(parentMap, blockMap, neighborKey);
         }
-        continue; // container inválido não expande
+        continue; // container que não aceita: não expande
       }
 
       if (isItemduct(neighbor)) {
@@ -172,10 +221,13 @@ function findPathForItem(startBlock, item, maxNodes = 512) {
   return [];
 }
 
+// ─────────────────────────────────────────────
+// BFS: re-encontra caminho de volta ao bloco de origem
+// ─────────────────────────────────────────────
+
 function reFindPathForItem(startBlock, targetLocation, item, maxNodes = 512) {
   const queue = [startBlock];
   let qi = 0;
-
   const parentMap = new Map();
   const blockMap = new Map();
 
@@ -183,9 +235,9 @@ function reFindPathForItem(startBlock, targetLocation, item, maxNodes = 512) {
   parentMap.set(startKey, null);
   blockMap.set(startKey, startBlock);
 
-  const initialBlock = startBlock.dimension.getBlock(targetLocation);
-
-  const targetKey = blockKey(initialBlock);
+  const targetBlock = startBlock.dimension.getBlock(targetLocation);
+  if (!targetBlock) return [];
+  const targetKey = blockKey(targetBlock);
 
   while (qi < queue.length) {
     if (qi >= maxNodes) return [];
@@ -193,7 +245,7 @@ function reFindPathForItem(startBlock, targetLocation, item, maxNodes = 512) {
     const currentBlock = queue[qi++];
     const currentKey = blockKey(currentBlock);
 
-    for (const face of sides) {
+    for (const face of SIDES) {
       if (isItemduct(currentBlock) && isFaceImpassable(currentBlock, face)) continue;
 
       let neighbor;
@@ -202,26 +254,20 @@ function reFindPathForItem(startBlock, targetLocation, item, maxNodes = 512) {
       } catch {
         continue;
       }
-
       if (!neighbor) continue;
 
       const neighborKey = blockKey(neighbor);
       if (parentMap.has(neighborKey)) continue;
 
-      // ✅ Verificação do target acontece para qualquer bloco vizinho
       if (neighborKey === targetKey) {
-        if (neighbor.typeId === "minecraft:air" || !containerBlock.includes(neighbor.typeId)) return [];
+        if (neighbor.typeId === "minecraft:air" || (!containerBlock.includes(neighbor.typeId) && !isDrawer(neighbor))) return [];
         parentMap.set(neighborKey, currentKey);
         blockMap.set(neighborKey, neighbor);
         return buildPath(parentMap, blockMap, neighborKey);
       }
 
-      // Containers que não são o target: não expande
-      if (containerBlock.includes(neighbor.typeId)) {
-        continue;
-      }
+      if (containerBlock.includes(neighbor.typeId) || isDrawer(neighbor)) continue; // não expande containers que não são o target
 
-      // Só expande se for duto
       if (isItemduct(neighbor)) {
         parentMap.set(neighborKey, currentKey);
         blockMap.set(neighborKey, neighbor);
@@ -232,6 +278,10 @@ function reFindPathForItem(startBlock, targetLocation, item, maxNodes = 512) {
 
   return [];
 }
+
+// ─────────────────────────────────────────────
+// Utilitários de bloco
+// ─────────────────────────────────────────────
 
 function blockKey(block) {
   const { x, y, z } = block.location;
@@ -252,6 +302,7 @@ function isItemduct(block) {
   return block?.typeId === "rc_sd:pipe";
 }
 
+/** Face bloqueada para passagem de BFS (pull ou desconectado) */
 function isFaceBlocked(block, face) {
   try {
     const state = block?.permutation?.getState?.(`rc_sd:${face}`);
@@ -261,6 +312,7 @@ function isFaceBlocked(block, face) {
   }
 }
 
+/** Face impassável apenas quando desconectada (false); pull ainda passa */
 function isFaceImpassable(block, face) {
   try {
     const state = block?.permutation?.getState?.(`rc_sd:${face}`);
@@ -270,43 +322,74 @@ function isFaceImpassable(block, face) {
   }
 }
 
-const faces = ["above", "below", "north", "south", "west", "east"];
+function getPullSides(block) {
+  return SIDES.filter(
+    (side) => block.permutation.getState(`rc_sd:${side}`) === "pull"
+  );
+}
+
+function canAcceptItem(targetBlock, item) {
+  // Drawer: delega para a API dedicada
+  if (isDrawer(targetBlock)) {
+    return drawerCanAcceptItem(targetBlock, item);
+  }
+
+  // Container normal
+  try {
+    const inv = targetBlock.getComponent("minecraft:inventory")?.container;
+    if (!inv || !item) return false;
+
+    const inputSlots = blocksConfig(targetBlock)?.inputSlots ?? [];
+    for (const i of inputSlots) {
+      const slot = inv.getItem(i);
+      if (!slot) return true;
+      if (
+        slot.typeId === item.typeId &&
+        slot.isStackable &&
+        item.isStackable &&
+        slot.amount < slot.maxAmount
+      ) {
+        return true;
+      }
+    }
+  } catch { /* inventário indisponível */ }
+  return false;
+}
+
+function getAllSlotsQuantity(block) {
+  const container = block?.getComponent?.("minecraft:inventory")?.container;
+  if (!container) return [];
+  return Array.from({ length: container.size }, (_, i) => i);
+}
+
+// ─────────────────────────────────────────────
+// Conexão / desconexão de blocos
+// ─────────────────────────────────────────────
 
 export function connectBlock(block, once = false) {
   let found = false;
 
-  for (const face of faces) {
+  for (const face of SIDES) {
     const faceBlock = block[face]();
-
     const stateName = `rc_sd:${face}`;
     const currentState = block.permutation.getState(stateName);
 
     const blockProperty = blocksConfig(block)?.faces?.[face];
-
     const neighborFace = astraAPI.invertFace(face);
-
-    const blockFaceProperty =
-      blocksConfig(faceBlock)?.faces?.[
-      astraAPI.trueFace(faceBlock, neighborFace)
-      ];
+    const neighborProperty = blocksConfig(faceBlock)?.faces?.[astraAPI.trueFace(faceBlock, neighborFace)];
 
     const hasCommonProperty =
       blockProperty &&
-      blockFaceProperty &&
-      blockProperty.some((prop) => blockFaceProperty.includes(prop));
+      neighborProperty &&
+      blockProperty.some((prop) => neighborProperty.includes(prop));
 
     if (hasCommonProperty) found = true;
 
     if (hasCommonProperty) {
-      if (block?.typeId.endsWith("pipe")) {
-        if (currentState !== "pull") {
-          astraAPI.setPermutation(block, stateName, "true");
-        }
+      if (block?.typeId.endsWith("pipe") && currentState !== "pull") {
+        astraAPI.setPermutation(block, stateName, "true");
       }
-
-      if (!once) {
-        connectBlock(faceBlock, true);
-      }
+      if (!once) connectBlock(faceBlock, true);
     } else if (block?.typeId.includes("pipe")) {
       if (currentState !== "pull") {
         astraAPI.setPermutation(block, stateName, "false");
@@ -315,119 +398,95 @@ export function connectBlock(block, once = false) {
   }
 }
 
-export function disconnectBlock(block, once) {
-  const faces = ["above", "below", "north", "south", "west", "east"];
-
-  for (const face of faces) {
+export function disconnectBlock(block, once = false) {
+  for (const face of SIDES) {
     const faceBlock = block[face]();
-    const blockFaceProperty =
-      blocksConfig(faceBlock)?.faces?.[
-      astraAPI.trueFace(faceBlock, astraAPI.invertFace(face))
-      ];
+    const neighborFace = astraAPI.invertFace(face);
+    const neighborProperty =
+      blocksConfig(faceBlock)?.faces?.[astraAPI.trueFace(faceBlock, neighborFace)];
 
     if (block?.typeId.includes("pipe")) {
       const currentState = block.permutation.getState(`rc_sd:${face}`);
 
-      if (blockFaceProperty?.includes("itemPipe")) {
-        // Se há conexão e o estado atual é "false", muda para "true"
-        // Se já é "pull", mantém "pull"
+      if (neighborProperty?.includes("itemPipe")) {
         if (currentState === "false") {
           astraAPI.setPermutation(block, `rc_sd:${face}`, "true");
         }
       } else {
-        // Se não há conexão, muda para "false"
         astraAPI.setPermutation(block, `rc_sd:${face}`, "false");
       }
     }
 
-    if (blockFaceProperty?.includes("itemPipe") && !once) {
+    if (neighborProperty?.includes("itemPipe") && !once) {
       disconnectBlock(faceBlock, true);
     }
   }
 }
 
-mc.system.afterEvents.scriptEventReceive.subscribe(
-  ({ id, sourceEntity: entity, message }) => {
-    if (id == "rc_sd:pipe_visual_item") {
-      if (!entity?.isValid) return;
+// ─────────────────────────────────────────────
+// Spawn da entidade visual no pipe
+// ─────────────────────────────────────────────
 
-      const block = entity.dimension.getBlock(entity.location);
-      //console.warn(block.typeId)
-      const inventory = entity.getComponent("minecraft:inventory");
-      const container = inventory.container;
-      const item = container.getItem(0);
-      const path = findPathForItem(block, item);
-      const rePath = reFindPathForItem(block, entity.getDynamicProperty('rc_sd:initial_block'), item);
-      if (block.typeId === "minecraft:air") {
-        block.dimension.spawnItem(item, block.center());
-        entity.remove();
-      }
-      if (path[1] && entity?.isValid) {
-        const nextBlock = entity.dimension.getBlock({
-          x: path[1].x,
-          y: path[1].y,
-          z: path[1].z,
-        });
-        moveEntity(entity, block, nextBlock, { speed: 2.3, yOffset: -0.3 });
+function spawnPipeVisual(dimension, item, fromBlock, toBlock) {
+  const itemType = astraAPI.itemType(fromBlock, item);
+  const replace =
+    itemType === "fake"
+      ? `rc_sd:${item.typeId.split(":")[1]}_item_fake`
+      : item.typeId;
 
-        if (containerBlock.includes(block.typeId)) {
-          const inventoryBlock = block.getComponent(
-            "minecraft:inventory"
-          );
-          const containerBlock = inventoryBlock.container;
-          const added = containerBlock.addItem(item);
-          if (entity.isValid)
-            entity?.remove();
-        }
-      } else {
-        if (!entity?.isValid) return
-        if (containerBlock.includes(block.typeId)) {
-          const inventoryBlock = block.getComponent(
-            "minecraft:inventory"
-          );
-          const containerBlock = inventoryBlock.container;
-          const added = containerBlock.addItem(item);
-          entity?.remove();
-        } else if (rePath[1]) {
-          const nextBlock = entity.dimension.getBlock({
-            x: rePath[1].x,
-            y: rePath[1].y,
-            z: rePath[1].z,
-          });
-          moveEntity(entity, block, nextBlock, { speed: 2.3, yOffset: -0.3 });
-        }
-      }
-    }
-  }
-);
+  const spawnPos = {
+    x: fromBlock.center().x,
+    y: fromBlock.location.y + 0.2,
+    z: fromBlock.center().z,
+  };
+
+  const itemEntity = dimension.spawnEntity("rc_sd:pipe_visual_item", spawnPos);
+  itemEntity.setDynamicProperty("rc_sd:initial_block", fromBlock.location);
+
+  mc.system.runTimeout(
+    () => dimension?.playSound("random.pop", toBlock.center(), { pitch: 0.65, volume: 0.035 }),
+    5
+  );
+
+  mc.system.runTimeout(
+    () =>
+      itemEntity.runCommand(
+        `replaceitem entity @s slot.weapon.${itemType === "item" ? "mainhand" : "offhand"} 0 ${replace}`
+      ),
+    1
+  );
+
+  // Coloca o item no inventário da entidade visual (amount = 1)
+  const entityInventory = itemEntity.getComponent("minecraft:inventory");
+  const singleItem = item.clone();
+  singleItem.amount = 1;
+  entityInventory.container.setItem(0, singleItem);
+
+  moveEntity(itemEntity, fromBlock, toBlock, { speed: MOVE_SPEED, yOffset: MOVE_Y_OFFSET });
+
+  return itemEntity;
+}
+
+
 
 function moveEntity(entity, startBlock, endBlock, options = {}) {
-  const speed =
-    typeof options.speed === "number" ? Math.max(0.01, options.speed) : 2;
-  const tickStep =
-    typeof options.tickStep === "number"
-      ? Math.max(1, options.tickStep | 0)
-      : 1;
-
-  // quanto descer (em blocos). ex: -0.25 desce um quarto de bloco
+  const speed = typeof options.speed === "number" ? Math.max(0.01, options.speed) : 2;
+  const tickStep = typeof options.tickStep === "number" ? Math.max(1, options.tickStep | 0) : 1;
   const yOffset = typeof options.yOffset === "number" ? options.yOffset : -0.25;
 
   if (!entity || !startBlock || !endBlock) return;
 
   const startC = startBlock.center();
   const endC = endBlock.center();
-
-  // aplique o offset na trajetória inteira
   const start = { x: startC.x, y: startC.y + yOffset, z: startC.z };
   const end = { x: endC.x, y: endC.y + yOffset, z: endC.z };
 
   const dir = { x: end.x - start.x, y: end.y - start.y, z: end.z - start.z };
-  const dist = Math.sqrt(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
+  const dist = Math.sqrt(dir.x ** 2 + dir.y ** 2 + dir.z ** 2);
+
   if (dist === 0) {
-    try {
-      entity.teleport(end);
-    } catch { }
-    if (options.onArrive) options.onArrive(entity, endBlock);
+    try { entity.teleport(end); } catch { /* entidade inválida */ }
+    options.onArrive?.(entity, endBlock);
     return;
   }
 
@@ -439,150 +498,80 @@ function moveEntity(entity, startBlock, endBlock, options = {}) {
     try {
       tick += tickStep;
       const t = Math.min(1, tick / totalTicks);
-
-      const pos = {
+      entity.teleport({
         x: start.x + (end.x - start.x) * t,
         y: start.y + (end.y - start.y) * t,
         z: start.z + (end.z - start.z) * t,
-      };
-
-      entity.teleport(pos);
+      });
 
       if (t >= 1) {
         mc.system.clearRun(id);
-        if (options.onArrive) options.onArrive(entity, endBlock);
+        options.onArrive?.(entity, endBlock);
       }
     } catch {
-      mc.system.clearRun(id);
+      mc.system.clearRun(id); // entidade removida durante a animação
     }
   }, tickStep);
 
   return id;
 }
 
-function canAcceptItem(targetBlock, item) {
-  try {
-    const inv = targetBlock.getComponent("minecraft:inventory")?.container;
-    if (!inv || !item) return false;
+// ─────────────────────────────────────────────
+// Script event: atualiza rota da entidade visual
+// ─────────────────────────────────────────────
 
-    const config = blocksConfig(targetBlock);
-    const inputSlots = config?.inputSlots ?? []; // fallback se não existir
+mc.system.afterEvents.scriptEventReceive.subscribe(({ id, sourceEntity: entity }) => {
+  if (id !== "rc_sd:pipe_visual_item") return;
+  if (!entity?.isValid) return;
 
-    for (const i of inputSlots) {
-      const slot = inv.getItem(i);
-      // slot vazio => cabe
-      if (!slot) return true;
+  const block = entity.dimension.getBlock(entity.location);
+  const inventory = entity.getComponent("minecraft:inventory");
+  const item = inventory?.container?.getItem(0);
 
-      // mesmo item + empilhável + ainda não lotou a pilha
-      const sameType = slot.typeId === item.typeId;
-      const stackable = slot.isStackable && item.isStackable;
-      if (sameType && stackable && slot.amount < slot.maxAmount) {
-        return true;
+  // Item chegou a um bloco de ar (pipe quebrado): dropa e remove
+  if (block.typeId === "minecraft:air") {
+    if (item) block.dimension.spawnItem(item, block.center());
+    entity.remove();
+    return;
+  }
+
+  // Se a entidade pousou num drawer: deposita via API do drawer e remove
+  if (isDrawer(block)) {
+    if (item) {
+      const accepted = pushItemToDrawer(block, item);
+      if (!accepted && entity.isValid) {
+        // Sem espaço no drawer: dropa o item no chão
+        block.dimension.spawnItem(item, block.center());
       }
     }
-  } catch { }
-  return false;
-}
+    if (entity.isValid) entity.remove();
+    return;
+  }
 
-function getPullSides(block) {
-  const pulls = [];
+  // Se a entidade pousou num container normal: deposita e remove
+  if (containerBlock.includes(block.typeId)) {
+    const containerInv = block.getComponent("minecraft:inventory")?.container;
+    if (item && containerInv) containerInv.addItem(item);
+    if (entity.isValid) entity.remove();
+    return;
+  }
 
-  for (const side of sides) {
-    if (block.permutation.getState(`rc_sd:${side}`) === "pull") {
-      pulls.push(side);
+  const path = findPathForItem(block, item);
+
+  if (path[1] && entity.isValid) {
+    // Avança pelo caminho encontrado
+    const nextBlock = entity.dimension.getBlock(path[1].location);
+    moveEntity(entity, block, nextBlock, { speed: MOVE_SPEED, yOffset: MOVE_Y_OFFSET });
+  } else {
+    // Sem caminho à frente: tenta voltar ao bloco de origem
+    const rePath = reFindPathForItem(
+      block,
+      entity.getDynamicProperty("rc_sd:initial_block"),
+      item
+    );
+    if (rePath[1] && entity.isValid) {
+      const nextBlock = entity.dimension.getBlock(rePath[1].location);
+      moveEntity(entity, block, nextBlock, { speed: MOVE_SPEED, yOffset: MOVE_Y_OFFSET });
     }
   }
-  return pulls;
-}
-
-function isEntrable(block) {
-  return containerBlock.includes(block?.typeId) || blocksConfig(block)?.faces;
-}
-
-export const containerBlock = [
-  "minecraft:chest",
-  "minecraft:furnace",
-  "minecraft:lit_furnace",
-  "minecraft:barrel",
-  "minecraft:hopper",
-  "minecraft:dispenser",
-];
-
-function getAllSlotsQuantity(block) {
-  const inv = block?.getComponent?.("minecraft:inventory");
-  const container = inv?.container;
-  if (!container) return [];
-
-  return Array.from({ length: container.size }, (_, i) => i);
-}
-
-const itemPipeFaces = {
-  above: ["itemPipe"],
-  below: ["itemPipe"],
-  north: ["itemPipe"],
-  south: ["itemPipe"],
-  west: ["itemPipe"],
-  east: ["itemPipe"],
-};
-
-const drawerFaces = {
-  north: ["itemPipe"],
-  south: ["itemPipe"],
-  east: ["itemPipe"],
-  west: ["itemPipe"],
-  above: ["itemPipe"],
-  below: ["itemPipe"],
-};
-
-export const blocksConfig = (block) => {
-  const typeId = typeof block === "string" ? block : block.typeId;
-
-  // pega qualquer drawer automaticamente
-  if (typeId.startsWith("rc_sd:") && typeId.includes("_drawer_")) {
-    return {
-      faces: drawerFaces,
-      outputSlots: getAllSlotsQuantity(block),
-      inputSlots: getAllSlotsQuantity(block),
-    };
-  }
-
-  const map = {
-    "minecraft:chest": {
-      faces: itemPipeFaces,
-      outputSlots: getAllSlotsQuantity(block),
-      inputSlots: getAllSlotsQuantity(block),
-    },
-
-    "minecraft:furnace": {
-      faces: itemPipeFaces,
-      outputSlots: [2],
-      inputSlots: [0],
-    },
-
-    "minecraft:lit_furnace": {
-      faces: itemPipeFaces,
-      outputSlots: [2],
-      inputSlots: [0],
-    },
-
-    "rc_sd:pipe": {
-      faces: itemPipeFaces,
-    },
-
-    "minecraft:barrel": {
-      faces: itemPipeFaces,
-      outputSlots: getAllSlotsQuantity(block),
-      inputSlots: getAllSlotsQuantity(block),
-    },
-
-    "minecraft:hopper": {
-      faces: itemPipeFaces,
-    },
-
-    "minecraft:dispenser": {
-      faces: itemPipeFaces,
-    },
-  };
-
-  return map[typeId];
-};
+});

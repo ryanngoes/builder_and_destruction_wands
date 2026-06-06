@@ -773,7 +773,7 @@ mc.world.afterEvents.dataDrivenEntityTrigger.subscribe(({ entity }) => {
         const block = entity.dimension.getBlock(entity.location)
 
         const config = block.getComponent("rc_sd:storage_drawer")?.customComponentParameters.params ??
-        block.getComponent("rc_sd:compact_drawer")?.customComponentParameters.params;;
+            block.getComponent("rc_sd:compact_drawer")?.customComponentParameters.params;;
         const type = config?.type; // "1x1", "1x2", "2x2", "ender"
         const amountPerSlot = config.amount_per_slot;
 
@@ -825,3 +825,215 @@ mc.world.afterEvents.dataDrivenEntityTrigger.subscribe(({ entity }) => {
     }
 
 }, { eventTypes: ["rc_sd:reset_selection"], entityTypes: ["rc_sd:drawer_inventory"] })
+
+// ─────────────────────────────────────────────
+// API do Drawer para uso pelo Pipe
+// ─────────────────────────────────────────────
+
+/**
+ * Retorna os visual items (slots) de um drawer, junto com o inventoryEntity.
+ * @param {mc.Block} block
+ * @returns {{ inventoryEntity: mc.Entity, visualItems: mc.Entity[] } | null}
+ */
+export function getDrawerEntities(block) {
+    const center = block.center();
+    const dimension = block.dimension;
+
+    const [inventoryEntity] = dimension.getEntities({
+        location: center,
+        type: "rc_sd:drawer_inventory",
+        maxDistance: 0.5,
+    });
+
+    if (!inventoryEntity?.isValid) return null;
+
+    const config =
+        block.getComponent("rc_sd:storage_drawer")?.customComponentParameters?.params ??
+        block.getComponent("rc_sd:compact_drawer")?.customComponentParameters?.params;
+
+    const type = config?.type;
+    if (!type) return null;
+
+    const visualType = type === "1x1" ? "rc_sd:normal_visual_item" : "rc_sd:small_visual_item";
+
+    const visualItems = dimension.getEntities({
+        location: center,
+        type: visualType,
+        maxDistance: 0.5,
+        tags: [inventoryEntity.id],
+    });
+
+    return { inventoryEntity, visualItems: [...visualItems], config };
+}
+
+/**
+ * Tenta retirar 1 item de um slot do drawer.
+ * Retorna o ItemStack retirado, ou null se não houver.
+ * @param {mc.Block} block
+ * @param {number} slotIndex  - índice do visual item (nameTag numérico)
+ * @returns {mc.ItemStack | null}
+ */
+export function pullItemFromDrawer(block, slotIndex = 0) {
+    const data = getDrawerEntities(block);
+    if (!data) return null;
+
+    const { inventoryEntity, visualItems, config } = data;
+
+    const visualItem = visualItems.find(e => Number(e.nameTag) === slotIndex);
+    if (!visualItem?.isValid) return null;
+
+    const quantity = StorageQuantityScoreboard.get(visualItem);
+    if (quantity <= 0) return null;
+
+    const visualInventory = visualItem.getComponent("minecraft:inventory")?.container;
+    if (!visualInventory) return null;
+
+    const itemInDrawer = visualInventory.getItem(0);
+    if (!itemInDrawer) return null;
+
+    const newQuantity = quantity - 1;
+    StorageQuantityScoreboard.set(visualItem, newQuantity);
+
+    // Atualiza visuais do número
+    const visual = astraAPI.formatVisualNumber(newQuantity);
+    for (const [key, value] of Object.entries(visual)) {
+        visualItem.setProperty(`rc_sd:${key}`, value);
+    }
+
+    // Atualiza display no inventoryEntity
+    const drawerInventory = inventoryEntity.getComponent("minecraft:inventory")?.container;
+    const maxQuantity = DrawerInventoryManager.getStorageLimit(config.amount_per_slot, drawerInventory);
+    const inventorySlot = astraAPI.getInventorySlot(config.type, slotIndex);
+
+    if (newQuantity <= 0) {
+        // Slot ficou vazio: limpa visuais
+        visualInventory.setItem(0, undefined);
+        visualItem.runCommand(`replaceitem entity @s slot.weapon.mainhand 0 air`);
+        visualItem.setProperty("rc_sd:visual_type", 0);
+        for (const key of Object.keys(visual)) visualItem.resetProperty(`rc_sd:${key}`);
+        const empty = new mc.ItemStack("rc_sd:air");
+        empty.nameTag = " ";
+        astraAPI.setItemSlot(empty, inventorySlot, inventoryEntity);
+    } else {
+        const displayItem = itemInDrawer.clone();
+        displayItem.amount = 1;
+        displayItem.nameTag = `§r§f${astraAPI.normalizeNumber(newQuantity)}/${astraAPI.normalizeNumber(maxQuantity)}`;
+        astraAPI.setItemSlot(displayItem, inventorySlot, inventoryEntity);
+    }
+
+    const result = itemInDrawer.clone();
+    result.amount = 1;
+    return result;
+}
+
+/**
+ * Tenta inserir 1 item em um drawer.
+ * Retorna true se foi inserido, false se não houve slot compatível ou espaço.
+ * @param {mc.Block} block
+ * @param {mc.ItemStack} item
+ * @returns {boolean}
+ */
+export function pushItemToDrawer(block, item) {
+    const data = getDrawerEntities(block);
+    if (!data) return false;
+
+    const { inventoryEntity, visualItems, config } = data;
+    const drawerInventory = inventoryEntity.getComponent("minecraft:inventory")?.container;
+    if (!drawerInventory) return false;
+
+    const maxQuantity = DrawerInventoryManager.getStorageLimit(config.amount_per_slot, drawerInventory);
+    const sortedVisualItems = [...visualItems].sort((a, b) => Number(a.nameTag) - Number(b.nameTag));
+
+    for (const visualItem of sortedVisualItems) {
+        if (!visualItem?.isValid) continue;
+
+        const quantity = StorageQuantityScoreboard.get(visualItem);
+        if (quantity >= maxQuantity) continue;
+
+        const visualInventory = visualItem.getComponent("minecraft:inventory")?.container;
+        if (!visualInventory) continue;
+
+        const itemInDrawer = visualInventory.getItem(0);
+
+        // Slot vazio e drawer não está travado → aceita qualquer item
+        if (!itemInDrawer && quantity === 0) {
+            if (block.permutation.getState("rc_sd:lock") === true) continue;
+
+            const itemType = astraAPI.itemType(block, item);
+            const numberToType = astraAPI.typeToNumber(itemType);
+            const replaceId = itemType === "fake"
+                ? `rc_sd:${item.typeId.split(":")[1]}_item_fake`
+                : item.typeId;
+
+            mc.system.runTimeout(() => {
+                if (visualItem?.isValid)
+                    visualItem.runCommand(`replaceitem entity @s slot.weapon.mainhand 0 ${replaceId}`);
+            }, 1);
+
+            const newItem = item.clone();
+            newItem.amount = 1;
+            visualInventory.setItem(0, newItem);
+            visualItem.setProperty("rc_sd:visual_type", numberToType);
+        } else if (itemInDrawer && astraAPI.compareItems(item, itemInDrawer)) {
+            // Slot já tem o mesmo item
+        } else {
+            continue; // item diferente, tenta próximo slot
+        }
+
+        // Incrementa quantidade
+        const newQuantity = quantity + 1;
+        StorageQuantityScoreboard.set(visualItem, newQuantity);
+
+        const visual = astraAPI.formatVisualNumber(newQuantity);
+        for (const [key, value] of Object.entries(visual)) {
+            visualItem.setProperty(`rc_sd:${key}`, value);
+        }
+
+        const slotIndex = Number(visualItem.nameTag);
+        const inventorySlot = astraAPI.getInventorySlot(config.type, slotIndex);
+        const currentItem = visualInventory.getItem(0) ?? item;
+        const displayItem = currentItem.clone();
+        displayItem.amount = 1;
+        displayItem.nameTag = `§r§f${astraAPI.normalizeNumber(newQuantity)}/${astraAPI.normalizeNumber(maxQuantity)}`;
+        astraAPI.setItemSlot(displayItem, inventorySlot, inventoryEntity);
+
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Verifica se o drawer pode aceitar um item específico.
+ * @param {mc.Block} block
+ * @param {mc.ItemStack} item
+ * @returns {boolean}
+ */
+export function drawerCanAcceptItem(block, item) {
+    const data = getDrawerEntities(block);
+    if (!data) return false;
+
+    const { inventoryEntity, visualItems, config } = data;
+    const drawerInventory = inventoryEntity.getComponent("minecraft:inventory")?.container;
+    if (!drawerInventory) return false;
+
+    const maxQuantity = DrawerInventoryManager.getStorageLimit(config.amount_per_slot, drawerInventory);
+
+    for (const visualItem of visualItems) {
+        if (!visualItem?.isValid) continue;
+
+        const quantity = StorageQuantityScoreboard.get(visualItem);
+        if (quantity >= maxQuantity) continue;
+
+        const visualInventory = visualItem.getComponent("minecraft:inventory")?.container;
+        if (!visualInventory) continue;
+
+        const itemInDrawer = visualInventory.getItem(0);
+
+        // Slot vazio (não travado) ou mesmo tipo de item
+        if (!itemInDrawer && block.permutation.getState("rc_sd:lock") !== true) return true;
+        if (itemInDrawer && astraAPI.compareItems(item, itemInDrawer)) return true;
+    }
+
+    return false;
+}

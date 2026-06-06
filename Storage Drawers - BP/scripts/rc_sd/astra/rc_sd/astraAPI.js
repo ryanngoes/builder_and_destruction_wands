@@ -586,11 +586,7 @@ export function setPermutation(block, stateAdd, stateValue) {
   try {
     const newPermutation = block.permutation.withState(stateAdd, stateValue);
     block.setPermutation(newPermutation);
-  } catch (e) {
-    console.warn(
-      `Erro ao alterar state ${stateAdd} para ${stateValue} no bloco ${block.typeId}: ${e}`
-    );
-  }
+  } catch (e) {}
 }
 
 const lastClickTimes = new Map();
@@ -1350,7 +1346,6 @@ export class StorageQuantityScoreboard {
      */
     static add(entity, amount = 1) {
         const current = this.get(entity);
-        console.warn(current)
         return this.set(entity, current + amount);
     }
 
@@ -2088,10 +2083,12 @@ export class InventoryManager {
      * @returns {import("@minecraft/server").ItemStack | undefined}
      */
     applyDurability(item, damage = 1, playBreakSound = true) {
+
         if (!item || damage <= 0 || this.isCreative()) return item;
 
         const durability = item.getComponent?.("minecraft:durability");
         if (!durability) return item;
+
 
         const nextDamage = durability.damage + damage;
 
