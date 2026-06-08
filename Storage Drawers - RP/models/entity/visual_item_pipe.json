@@ -1,0 +1,51 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.rc_sd.visual_item_pipe",
+				"texture_width": 16,
+				"texture_height": 16,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "root",
+					"pivot": [0, 8, 0]
+				},
+				{
+					"name": "globalItemAjust",
+					"parent": "root",
+					"pivot": [0, 8, 0]
+				},
+				{
+					"name": "rootItem",
+					"parent": "globalItemAjust",
+					"pivot": [0, 8, 0]
+				},
+				{
+					"name": "rightArm",
+					"parent": "rootItem",
+					"pivot": [0, 8, 0]
+				},
+				{
+					"name": "rightItem",
+					"parent": "rightArm",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "leftArm",
+					"parent": "rootItem",
+					"pivot": [0, 8, 0]
+				},
+				{
+					"name": "leftItem",
+					"parent": "leftArm",
+					"pivot": [0, 0, 0]
+				}
+			]
+		}
+	]
+}

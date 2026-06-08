@@ -7,10 +7,10 @@
         "default": "entity_custom"
       },
       "textures": {
-        "default": "textures/rc/sd/blocks/air"
+        "default": "textures/rc/sd/blocks/black"
       },
       "geometry": {
-        "default": "geometry.rc_sd.visual_item"
+        "default": "geometry.rc_sd.visual_item_pipe"
       },
       "animations": {
         "float_item": "animation.rc_sd.pipe_visual_item_float",
@@ -20,7 +20,7 @@
         "visual_type_block_layer": "animation.rc_sd.item_pipe_ajust_block",
         "visual_type_item_layer": "animation.rc_sd.item_pipe_ajust_item",
         "visual_type_invert_layer": "animation.rc_sd.item_pipe_ajust_item",
-        "visual_type_weapon_layer": "animation.rc_sd.item_pipe_ajust_item",
+        "visual_type_weapon_layer": "animation.rc_sd.item_pipe_ajust_weapon",
         "visual_type_stairs_layer": "animation.rc_sd.item_pipe_ajust_item"
       },
       "scripts": {

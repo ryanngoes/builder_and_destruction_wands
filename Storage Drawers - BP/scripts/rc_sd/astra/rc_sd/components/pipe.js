@@ -8,7 +8,7 @@ import { pullItemFromDrawer, pushItemToDrawer, drawerCanAcceptItem, getDrawerEnt
 // ─────────────────────────────────────────────
 
 const SIDES = ["north", "south", "east", "west", "above", "below"];
-const MOVE_SPEED = 2.3;
+const MOVE_SPEED = 2.4;
 const MOVE_Y_OFFSET = -0.3;
 
 export const containerBlock = [
@@ -75,7 +75,13 @@ export function pipeComponent(data) {
       const pulls = getPullSides(block);
 
       for (const side of pulls) {
-        const targetBlock = block[side]();
+        let targetBlock;
+        try {
+          targetBlock = block[side]?.();
+        } catch {
+          continue; // bloco fora do chunk carregado
+        }
+        if (!targetBlock) continue;
 
         // ── Drawer: usa a API própria do drawer ──
         if (isDrawer(targetBlock)) {
@@ -152,7 +158,7 @@ export function pipeComponent(data) {
       const items = dimension.getEntities({
         location: center,
         maxDistance: 0.8,
-        type: "rc_sd:item",
+        type: "rc_sd:pipe_visual_item",
       });
 
       for (const item of items) {
@@ -198,7 +204,7 @@ function findPathForItem(startBlock, item, maxNodes = 512) {
       const neighborKey = blockKey(neighbor);
       if (parentMap.has(neighborKey)) continue;
 
-      const opp = astraAPI.invertFace[face];
+      const opp = astraAPI.invertFace(face);
       if (isItemduct(neighbor) && isFaceBlocked(neighbor, opp)) continue;
 
       if (containerBlock.includes(neighbor.typeId) || isDrawer(neighbor)) {
@@ -302,6 +308,15 @@ function isItemduct(block) {
   return block?.typeId === "rc_sd:pipe";
 }
 
+/** Acesso seguro a vizinho: protege contra chunk descarregado */
+function getNeighborSafe(block, face) {
+  try {
+    return block?.[face]?.();
+  } catch {
+    return undefined;
+  }
+}
+
 /** Face bloqueada para passagem de BFS (pull ou desconectado) */
 function isFaceBlocked(block, face) {
   try {
@@ -367,14 +382,16 @@ function getAllSlotsQuantity(block) {
 // ─────────────────────────────────────────────
 
 export function connectBlock(block, once = false) {
-  let found = false;
+  const blockConfig = blocksConfig(block);
 
   for (const face of SIDES) {
-    const faceBlock = block[face]();
+    const faceBlock = getNeighborSafe(block, face);
+    if (!faceBlock) continue;
+
     const stateName = `rc_sd:${face}`;
     const currentState = block.permutation.getState(stateName);
 
-    const blockProperty = blocksConfig(block)?.faces?.[face];
+    const blockProperty = blockConfig?.faces?.[astraAPI.trueFace(block, face)];
     const neighborFace = astraAPI.invertFace(face);
     const neighborProperty = blocksConfig(faceBlock)?.faces?.[astraAPI.trueFace(faceBlock, neighborFace)];
 
@@ -383,14 +400,12 @@ export function connectBlock(block, once = false) {
       neighborProperty &&
       blockProperty.some((prop) => neighborProperty.includes(prop));
 
-    if (hasCommonProperty) found = true;
-
     if (hasCommonProperty) {
-      if (block?.typeId.endsWith("pipe") && currentState !== "pull") {
+      if (isItemduct(block) && currentState !== "pull") {
         astraAPI.setPermutation(block, stateName, "true");
       }
       if (!once) connectBlock(faceBlock, true);
-    } else if (block?.typeId.includes("pipe")) {
+    } else if (isItemduct(block)) {
       if (currentState !== "pull") {
         astraAPI.setPermutation(block, stateName, "false");
       }
@@ -400,12 +415,14 @@ export function connectBlock(block, once = false) {
 
 export function disconnectBlock(block, once = false) {
   for (const face of SIDES) {
-    const faceBlock = block[face]();
+    const faceBlock = getNeighborSafe(block, face);
+    if (!faceBlock) continue;
+
     const neighborFace = astraAPI.invertFace(face);
     const neighborProperty =
       blocksConfig(faceBlock)?.faces?.[astraAPI.trueFace(faceBlock, neighborFace)];
 
-    if (block?.typeId.includes("pipe")) {
+    if (isItemduct(block)) {
       const currentState = block.permutation.getState(`rc_sd:${face}`);
 
       if (neighborProperty?.includes("itemPipe")) {
@@ -530,6 +547,12 @@ mc.system.afterEvents.scriptEventReceive.subscribe(({ id, sourceEntity: entity }
   const block = entity.dimension.getBlock(entity.location);
   const inventory = entity.getComponent("minecraft:inventory");
   const item = inventory?.container?.getItem(0);
+
+  // Chunk descarregado: bloco indisponível, não há como continuar
+  if (!block) {
+    if (entity.isValid) entity.remove();
+    return;
+  }
 
   // Item chegou a um bloco de ar (pipe quebrado): dropa e remove
   if (block.typeId === "minecraft:air") {
