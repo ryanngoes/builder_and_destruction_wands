@@ -43,7 +43,7 @@ export function wrenchComponent(data) {
       if (!face) return;
 
       const neighbor = block[face]?.();
-      if (!neighbor) return;
+      if (!neighbor || block.typeId === 'rc_sd:pipe') return;
 
       if (neighbor.typeId !== "rc_sd:pipe") return;
 

@@ -141,7 +141,7 @@ export function pipeComponent(data) {
         event.block.setPermutation(event.permutationToPlace);
         connectBlock(block, false);
         InventoryManager.clearMainhand(1, false);
-        block.dimension.playSound('dig.stone', block.center(), {pitch: 1.25})
+        block.dimension.playSound('dig.stone', block.center(), { pitch: 1.25 })
       });
     },
 
@@ -428,7 +428,9 @@ export function disconnectBlock(block, once = false) {
 // ─────────────────────────────────────────────
 
 function spawnPipeVisual(dimension, item, fromBlock, toBlock) {
-  const itemType = astraAPI.itemType(fromBlock, item);
+  const itemType = astraAPI.itemType(fromBlock, item)
+  const numberToType = astraAPI.typeToNumber(itemType);
+
   const replace =
     itemType === "fake"
       ? `rc_sd:${item.typeId.split(":")[1]}_item_fake`
@@ -442,6 +444,7 @@ function spawnPipeVisual(dimension, item, fromBlock, toBlock) {
 
   const itemEntity = dimension.spawnEntity("rc_sd:pipe_visual_item", spawnPos);
   itemEntity.setDynamicProperty("rc_sd:initial_block", fromBlock.location);
+  itemEntity.setProperty("rc_sd:visual_type", numberToType);
 
   mc.system.runTimeout(
     () => dimension?.playSound("random.pop", toBlock.center(), { pitch: 0.65, volume: 0.035 }),
