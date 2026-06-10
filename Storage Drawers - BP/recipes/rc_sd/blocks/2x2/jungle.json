@@ -1,0 +1,33 @@
+{
+    "format_version": "1.21.60",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "rc_sd:jungle_drawer_2x2"
+        },
+        "tags": ["crafting_table"],
+        "pattern": [
+            "BAB",
+            "AAA",
+            "BAB"
+        ],
+        "key": {
+            "A": {
+                "item": "minecraft:jungle_planks"
+            },
+            "B": {
+                "item": "minecraft:chest"
+            }
+        },
+        "result": {
+            "item": "rc_sd:jungle_drawer_2x2"
+        },
+        "unlock": [
+            {
+                "item": "minecraft:jungle_planks"
+            },
+            {
+                "item": "minecraft:chest"
+            }
+        ]
+    }
+}

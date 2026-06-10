@@ -1,0 +1,33 @@
+{
+    "format_version": "1.21.60",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "rc_sd:golden_upgrade"
+        },
+        "tags": ["crafting_table"],
+        "pattern": [
+            " A ",
+            "ABA",
+            " A "
+        ],
+        "key": {
+            "A": {
+                "item": "minecraft:gold_ingot"
+            },
+            "B": {
+                "item": "rc_sd:iron_upgrade"
+            }
+        },
+        "result": {
+            "item": "rc_sd:golden_upgrade"
+        },
+        "unlock": [
+            {
+                "item": "minecraft:gold_ingot"
+            },
+            {
+                "item": "rc_sd:iron_upgrade"
+            }
+        ]
+    }
+}

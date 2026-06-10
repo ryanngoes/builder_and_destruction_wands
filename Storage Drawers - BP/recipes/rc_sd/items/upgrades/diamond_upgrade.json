@@ -1,0 +1,33 @@
+{
+    "format_version": "1.21.60",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "rc_sd:diamond_upgrade"
+        },
+        "tags": ["crafting_table"],
+        "pattern": [
+            " A ",
+            "ABA",
+            " A "
+        ],
+        "key": {
+            "A": {
+                "item": "minecraft:diamond"
+            },
+            "B": {
+                "item": "rc_sd:golden_upgrade"
+            }
+        },
+        "result": {
+            "item": "rc_sd:diamond_upgrade"
+        },
+        "unlock": [
+            {
+                "item": "minecraft:diamond"
+            },
+            {
+                "item": "rc_sd:golden_upgrade"
+            }
+        ]
+    }
+}

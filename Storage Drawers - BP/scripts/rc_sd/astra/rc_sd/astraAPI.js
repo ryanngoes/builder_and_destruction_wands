@@ -880,12 +880,13 @@ export class ItemTypeManager {
         invert: 126,
         weapon: 125,
         stair: 124,
+        wall: 123,
 
         misc: 3,
         small: 4,
         beacon: 5,
         heavy: 8,
-        wall: 9,
+
         rod: 10,
         dripstone: 11,
         fake: 12,

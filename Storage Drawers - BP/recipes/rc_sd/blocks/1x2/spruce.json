@@ -1,0 +1,33 @@
+{
+    "format_version": "1.21.60",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "rc_sd:spruce_drawer_1x2"
+        },
+        "tags": ["crafting_table"],
+        "pattern": [
+            "ABA",
+            "AAA",
+            "ABA"
+        ],
+        "key": {
+            "A": {
+                "item": "minecraft:spruce_planks"
+            },
+            "B": {
+                "item": "minecraft:chest"
+            }
+        },
+        "result": {
+            "item": "rc_sd:spruce_drawer_1x2"
+        },
+        "unlock": [
+            {
+                "item": "minecraft:spruce_planks"
+            },
+            {
+                "item": "minecraft:chest"
+            }
+        ]
+    }
+}

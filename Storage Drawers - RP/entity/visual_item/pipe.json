@@ -21,7 +21,8 @@
         "visual_type_item_layer": "animation.rc_sd.item_pipe_ajust_item",
         "visual_type_invert_layer": "animation.rc_sd.item_pipe_ajust_block",
         "visual_type_weapon_layer": "animation.rc_sd.item_pipe_ajust_weapon",
-        "visual_type_stairs_layer": "animation.rc_sd.item_pipe_ajust_block"
+        "visual_type_stairs_layer": "animation.rc_sd.item_pipe_ajust_block",
+        "visual_type_wall_layer": "animation.rc_sd.item_pipe_ajust_block"
       },
       "scripts": {
         "animate": ["float_item", "adjust_item"]

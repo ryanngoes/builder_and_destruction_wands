@@ -19,6 +19,9 @@
             },
             {
               "visual_type_stairs_layer": "q.property('rc_sd:visual_type') == 124"
+            },
+            {
+              "visual_type_wall_layer": "q.property('rc_sd:visual_type') == 123"
             }
           ]
         },
@@ -51,6 +54,12 @@
           "animations": ["visual_type_stairs_layer"],
           "transitions": [
             { "default": "q.property('rc_sd:visual_type') != 124" }
+          ]
+        },
+        "visual_type_wall_layer": {
+          "animations": ["visual_type_wall_layer"],
+          "transitions": [
+            { "default": "q.property('rc_sd:visual_type') != 123" }
           ]
         }
       }

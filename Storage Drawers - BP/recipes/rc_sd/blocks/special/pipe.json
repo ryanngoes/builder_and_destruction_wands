@@ -1,0 +1,37 @@
+{
+    "format_version": "1.21.60",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "rc_sd:pipe"
+        },
+        "tags": ["crafting_table"],
+        "pattern": [
+            "AAA",
+            "BCB",
+            "AAA"
+        ],
+        "key": {
+            "A": {
+                "item": "minecraft:glass"
+            },
+            "B": {
+                "item": "minecraft:iron_ingot"
+            },
+            "C": {
+                "item": "minecraft:hopper"
+            }
+        },
+        "result": {
+            "item": "rc_sd:pipe",
+            "count": 4
+        },
+        "unlock": [
+            {
+                "item": "minecraft:glass"
+            },
+            {
+                "item": "minecraft:hopper"
+            }
+        ]
+    }
+}

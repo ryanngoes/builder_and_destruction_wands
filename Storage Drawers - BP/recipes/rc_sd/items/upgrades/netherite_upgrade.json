@@ -1,0 +1,33 @@
+{
+    "format_version": "1.21.60",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "rc_sd:netherite_upgrade"
+        },
+        "tags": ["crafting_table"],
+        "pattern": [
+            " A ",
+            "ABA",
+            " A "
+        ],
+        "key": {
+            "A": {
+                "item": "minecraft:netherite_ingot"
+            },
+            "B": {
+                "item": "rc_sd:diamond_upgrade"
+            }
+        },
+        "result": {
+            "item": "rc_sd:netherite_upgrade"
+        },
+        "unlock": [
+            {
+                "item": "minecraft:netherite_ingot"
+            },
+            {
+                "item": "rc_sd:diamond_upgrade"
+            }
+        ]
+    }
+}

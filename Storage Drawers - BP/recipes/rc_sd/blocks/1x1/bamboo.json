@@ -1,0 +1,33 @@
+{
+    "format_version": "1.21.60",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "rc_sd:bamboo_drawer_1x1"
+        },
+        "tags": ["crafting_table"],
+        "pattern": [
+            "AAA",
+            " B ",
+            "AAA"
+        ],
+        "key": {
+            "A": {
+                "item": "minecraft:bamboo_planks"
+            },
+            "B": {
+                "item": "minecraft:chest"
+            }
+        },
+        "result": {
+            "item": "rc_sd:bamboo_drawer_1x1"
+        },
+        "unlock": [
+            {
+                "item": "minecraft:bamboo_planks"
+            },
+            {
+                "item": "minecraft:chest"
+            }
+        ]
+    }
+}

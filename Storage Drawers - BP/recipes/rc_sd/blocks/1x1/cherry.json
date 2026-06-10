@@ -1,0 +1,33 @@
+{
+    "format_version": "1.21.60",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "rc_sd:cherry_drawer_1x1"
+        },
+        "tags": ["crafting_table"],
+        "pattern": [
+            "AAA",
+            " B ",
+            "AAA"
+        ],
+        "key": {
+            "A": {
+                "item": "minecraft:cherry_planks"
+            },
+            "B": {
+                "item": "minecraft:chest"
+            }
+        },
+        "result": {
+            "item": "rc_sd:cherry_drawer_1x1"
+        },
+        "unlock": [
+            {
+                "item": "minecraft:cherry_planks"
+            },
+            {
+                "item": "minecraft:chest"
+            }
+        ]
+    }
+}

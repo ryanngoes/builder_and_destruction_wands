@@ -38,7 +38,8 @@
         "visual_type_item_layer": "animation.rc_sd.visual_type.item_layer",
         "visual_type_invert_layer": "animation.rc_sd.visual_type.invert_layer",
         "visual_type_weapon_layer": "animation.rc_sd.visual_type.weapon_layer",
-        "visual_type_stairs_layer": "animation.rc_sd.visual_type.stairs_layer"
+        "visual_type_stairs_layer": "animation.rc_sd.visual_type.stairs_layer",
+        "visual_type_wall_layer": "animation.rc_sd.visual_type.wall_layer"
       },
       "held_item_ignores_lighting": true,
       "scripts": {
