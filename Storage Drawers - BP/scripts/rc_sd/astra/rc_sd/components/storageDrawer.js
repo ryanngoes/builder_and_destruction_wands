@@ -29,8 +29,8 @@ export function storageDrawerComponent(data) {
             const invertByRotation = {
                 north: { invertU: true, invertV: false },
                 south: { invertU: true, invertV: false },
-                east: { invertU: true, invertV: false },
-                west: { invertU: true, invertV: false },
+                east: { invertU: false, invertV: false },
+                west: { invertU: false, invertV: false },
             };
 
             const slotConfigs = {
@@ -710,7 +710,7 @@ function removeItemFromCompactDrawer({ block, inventoryEntity, config, slot, pla
     });
 }
 
-function clearCompactVisuals(block, inventoryEntity) {
+export function clearCompactVisuals(block, inventoryEntity) {
     const center = block.center();
     const dimension = block.dimension;
 

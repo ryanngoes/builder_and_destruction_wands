@@ -52,11 +52,7 @@
       }
     },
     "events": {
-      "rc_sd:move": {
-        "queue_command": {
-          "command": "scriptevent rc_sd:pipe_visual_item"
-        }
-      }
+      "rc_sd:move": {}
     }
   }
 }

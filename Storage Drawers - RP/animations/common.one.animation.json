@@ -3,15 +3,12 @@
   "animations": {
     "animation.rc_sd.pipe_visual_item_float": {
       "loop": true,
-      "animation_length": 5.0,
+      "animation_length": 1.0,
       "bones": {
-      "globalItemAjust": {
-        "rotation": {
-          "0.0": [0, 0, 0],
-          "5.0": [0, 360, 0]
+        "globalItemAjust": {
+          "rotation": [0, "math.mod(query.time_stamp * 3, 360)", 0],
+          "scale": 1
         },
-        "scale": 1
-      },
         "rightItem": {
           //"position": [-3, 3.2, -4],
           "rotation": [0, 0, 0]

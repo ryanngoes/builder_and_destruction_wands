@@ -1,9 +1,25 @@
 {
-
   "entity_sounds": {
     "entities": {
       "rc_sd:pipe_visual_item": {
         "events": {
+          "step": "null"
+        }
+      },
+      "rc_sd:drawer_inventory": {
+        "events": {
+          "ambient": "null",
+          "attack": "null",
+          "attack.strong": "null",
+          "cast.spell": "null",
+          "death": "null",
+          "fall.big": "null",
+          "fall.small": "null",
+          "hurt": "null",
+          "prepare.attack": "null",
+          "roar": "null",
+          "shoot": "null",
+          "splash": "null",
           "step": "null"
         }
       }

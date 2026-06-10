@@ -4,6 +4,7 @@ import * as mcUI from "@minecraft/server-ui";
 import * as astraAPI from "../astraAPI.js";
 import { Vector, StorageQuantityScoreboard, InventoryManager, DrawerInventoryManager, addItemFromHopper } from "../astraAPI.js";
 import { updateCompactVisuals, getGroupData, getCompactSlotValue, getCompactTotalBase } from "./compactDrawer.js";
+import { getDrawerEntities, pullItemFromDrawer } from "./storageDrawer.js";
 
 import FaceSelectionPlains from './faceSelection.js';
 
@@ -227,6 +228,150 @@ export function drawerControllerComponent(data) {
 function isDrawer(block) {
     const id = block.typeId;
     return id.startsWith("rc_sd:") && id.includes("_drawer_");
+}
+
+export function isDrawerController(block) {
+    return block?.typeId === "rc_sd:drawer_controller";
+}
+
+/** Retorna o primeiro item disponível nos drawers conectados (sem modificar nada). */
+export function getControllerItem(block) {
+    const drawers = getAllConnectedDrawers(block, 18);
+    const dimension = block.dimension;
+
+    for (const drawerBlock of drawers) {
+        const drawer = dimension.getBlock(drawerBlock);
+        if (!drawer?.isValid) continue;
+
+        const data = getDrawerEntities(drawer);
+        if (!data) continue;
+
+        for (const vi of data.visualItems) {
+            if (!vi?.isValid) continue;
+            const qty = StorageQuantityScoreboard.get(vi);
+            if (qty <= 0) continue;
+            const it = vi.getComponent("minecraft:inventory")?.container?.getItem(0);
+            if (!it) continue;
+
+            const result = it.clone();
+            result.amount = 1;
+            return result;
+        }
+    }
+    return null;
+}
+
+/** Extrai 1 item do primeiro drawer conectado com stock. */
+export function pullItemFromController(block) {
+    const drawers = getAllConnectedDrawers(block, 18);
+    const dimension = block.dimension;
+
+    for (const drawerBlock of drawers) {
+        const drawer = dimension.getBlock(drawerBlock);
+        if (!drawer?.isValid) continue;
+
+        const data = getDrawerEntities(drawer);
+        if (!data) continue;
+
+        for (const vi of data.visualItems) {
+            if (!vi?.isValid) continue;
+            const qty = StorageQuantityScoreboard.get(vi);
+            if (qty <= 0) continue;
+            const it = vi.getComponent("minecraft:inventory")?.container?.getItem(0);
+            if (!it) continue;
+
+            return pullItemFromDrawer(drawer, Number(vi.nameTag));
+        }
+    }
+    return null;
+}
+
+/**
+ * Deposita 1 item no drawer conectado adequado.
+ * Segue a mesma regra do hopper: só deposita em drawers que já têm aquele
+ * item definido — não cria item novo em slot vazio.
+ */
+export function pushItemToController(block, item) {
+    const drawers = getAllConnectedDrawers(block, 18);
+    const dimension = block.dimension;
+
+    for (const drawerBlock of drawers) {
+        const drawer = dimension.getBlock(drawerBlock);
+        if (!drawer?.isValid) continue;
+
+        const data = getDrawerEntities(drawer);
+        if (!data) continue;
+
+        const { inventoryEntity, visualItems, config } = data;
+        const drawerInventory = inventoryEntity.getComponent("minecraft:inventory")?.container;
+        if (!drawerInventory) continue;
+
+        const maxQuantity = DrawerInventoryManager.getStorageLimit(config.amount_per_slot, drawerInventory);
+
+        for (const visualItem of visualItems) {
+            if (!visualItem?.isValid) continue;
+
+            const visualInventory = visualItem.getComponent("minecraft:inventory")?.container;
+            const itemInDrawer = visualInventory?.getItem(0);
+
+            if (!itemInDrawer) continue;
+            if (!astraAPI.compareItems(item, itemInDrawer)) continue;
+
+            const quantity = StorageQuantityScoreboard.get(visualItem);
+            if (quantity >= maxQuantity) continue;
+
+            const newQuantity = quantity + 1;
+            StorageQuantityScoreboard.set(visualItem, newQuantity);
+
+            const visual = astraAPI.formatVisualNumber(newQuantity);
+            for (const [key, val] of Object.entries(visual)) {
+                visualItem.setProperty(`rc_sd:${key}`, val);
+            }
+
+            const inventorySlot = astraAPI.getInventorySlot(config.type, Number(visualItem.nameTag));
+            const displayItem = itemInDrawer.clone();
+            displayItem.amount = 1;
+            displayItem.nameTag = `§r§f${astraAPI.normalizeNumber(newQuantity)}/${astraAPI.normalizeNumber(maxQuantity)}`;
+            astraAPI.setItemSlot(displayItem, inventorySlot, inventoryEntity);
+
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Verifica se algum drawer conectado pode receber o item.
+ * Usa a mesma regra estrita do push: só aceita em drawers que já têm o item.
+ */
+export function controllerCanAcceptItem(block, item) {
+    const drawers = getAllConnectedDrawers(block, 18);
+    const dimension = block.dimension;
+
+    for (const drawerBlock of drawers) {
+        const drawer = dimension.getBlock(drawerBlock);
+        if (!drawer?.isValid) continue;
+
+        const data = getDrawerEntities(drawer);
+        if (!data) continue;
+
+        const { inventoryEntity, visualItems, config } = data;
+        const drawerInventory = inventoryEntity.getComponent("minecraft:inventory")?.container;
+        if (!drawerInventory) continue;
+
+        const maxQuantity = DrawerInventoryManager.getStorageLimit(config.amount_per_slot, drawerInventory);
+
+        for (const visualItem of visualItems) {
+            if (!visualItem?.isValid) continue;
+            const visualInventory = visualItem.getComponent("minecraft:inventory")?.container;
+            const itemInDrawer = visualInventory?.getItem(0);
+            if (!itemInDrawer) continue;
+            if (!astraAPI.compareItems(item, itemInDrawer)) continue;
+            const quantity = StorageQuantityScoreboard.get(visualItem);
+            if (quantity < maxQuantity) return true;
+        }
+    }
+    return false;
 }
 
 export function getAllConnectedDrawers(startBlock, maxBlocks = 512) {

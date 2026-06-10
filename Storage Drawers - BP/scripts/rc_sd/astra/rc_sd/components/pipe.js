@@ -2,6 +2,8 @@ import * as mc from "@minecraft/server";
 import * as astraAPI from "../astraAPI.js";
 import { StorageQuantityScoreboard } from "../astraAPI.js";
 import { pullItemFromDrawer, pushItemToDrawer, drawerCanAcceptItem, getDrawerEntities } from "./storageDrawer.js";
+import { isCompactDrawer, getCompactDrawerItem, pullItemFromCompactDrawer, pushItemToCompactDrawer, compactDrawerCanAcceptItem } from "./compactDrawer.js";
+import { isDrawerController, getControllerItem, pullItemFromController, pushItemToController, controllerCanAcceptItem } from "./drawerController.js";
 
 // ─────────────────────────────────────────────
 // Constantes
@@ -11,24 +13,14 @@ const SIDES = ["north", "south", "east", "west", "above", "below"];
 const MOVE_SPEED = 2.4;
 const MOVE_Y_OFFSET = -0.3;
 
-export const containerBlock = [
-  "minecraft:chest",
-  "minecraft:furnace",
-  "minecraft:lit_furnace",
-  "minecraft:barrel",
-  "minecraft:hopper",
-  "minecraft:dispenser",
-];
-
 /** Retorna true para qualquer drawer do mod */
 function isDrawer(block) {
   const id = block?.typeId ?? "";
   return id.startsWith("rc_sd:") && id.includes("_drawer_");
 }
 
-/** Retorna true para qualquer bloco que pode receber/enviar itens */
-function isContainer(block) {
-  return containerBlock.includes(block?.typeId) || isDrawer(block);
+export function isContainer(block) {
+  return blocksConfig(block) && block.typeId !== 'rc_sd:pipe'
 }
 
 // ─────────────────────────────────────────────
@@ -37,31 +29,108 @@ function isContainer(block) {
 
 const itemPipeFaces = Object.fromEntries(SIDES.map((s) => [s, ["itemPipe"]]));
 
+export const map = {
+  "minecraft:chest": {
+    faces: itemPipeFaces,
+    useAllSlots: true,
+  },
+
+  "minecraft:furnace": {
+    faces: itemPipeFaces,
+    outputSlots: [2],
+    inputSlots: [0],
+  },
+
+  "minecraft:lit_furnace": {
+    faces: itemPipeFaces,
+    outputSlots: [2],
+    inputSlots: [0],
+  },
+
+  "minecraft:smoker": {
+    faces: itemPipeFaces,
+    outputSlots: [2],
+    inputSlots: [0],
+  },
+
+  "minecraft:lit_smoker": {
+    faces: itemPipeFaces,
+    outputSlots: [2],
+    inputSlots: [0],
+  },
+
+  "minecraft:blast_furnace": {
+    faces: itemPipeFaces,
+    outputSlots: [2],
+    inputSlots: [0],
+  },
+
+  "minecraft:lit_blast_furnace": {
+    faces: itemPipeFaces,
+    outputSlots: [2],
+    inputSlots: [0],
+  },
+
+  "rc_sd:pipe": {
+    faces: itemPipeFaces,
+  },
+
+  "rc_sd:compact_drawer": {
+    faces: itemPipeFaces,
+  },
+
+  "rc_sd:drawer_controller": {
+    faces: itemPipeFaces,
+  },
+
+  "minecraft:barrel": {
+    faces: itemPipeFaces,
+    useAllSlots: true,
+  },
+
+  "minecraft:hopper": {
+    faces: itemPipeFaces,
+  },
+
+  "minecraft:dispenser": {
+    faces: itemPipeFaces,
+  },
+
+  "rc_mc:iron_chest": {
+    faces: itemPipeFaces,
+    isBlockEntity: { typeId: "rc_mc:iron_chest" },
+    useAllSlots: true,
+  },
+};
+
 export const blocksConfig = (block) => {
   const typeId = typeof block === "string" ? block : block?.typeId;
   if (!typeId) return undefined;
 
   if (typeId.startsWith("rc_sd:") && typeId.includes("_drawer_")) {
+    const allSlots = getAllSlotsQuantity(block);
+
     return {
       faces: itemPipeFaces,
-      outputSlots: getAllSlotsQuantity(block),
-      inputSlots: getAllSlotsQuantity(block),
+      outputSlots: allSlots,
+      inputSlots: allSlots,
     };
   }
 
-  const allSlots = getAllSlotsQuantity(block);
+  const config = map[typeId];
+  if (!config) return undefined;
 
-  const map = {
-    "minecraft:chest": { faces: itemPipeFaces, outputSlots: allSlots, inputSlots: allSlots },
-    "minecraft:furnace": { faces: itemPipeFaces, outputSlots: [2], inputSlots: [0] },
-    "minecraft:lit_furnace": { faces: itemPipeFaces, outputSlots: [2], inputSlots: [0] },
-    "rc_sd:pipe": { faces: itemPipeFaces },
-    "minecraft:barrel": { faces: itemPipeFaces, outputSlots: allSlots, inputSlots: allSlots },
-    "minecraft:hopper": { faces: itemPipeFaces },
-    "minecraft:dispenser": { faces: itemPipeFaces },
-  };
+  if (config.useAllSlots) {
+    const allSlots = getAllSlotsQuantity(block);
 
-  return map[typeId];
+    return {
+      ...config,
+      outputSlots: allSlots,
+      inputSlots: allSlots,
+    };
+  }
+
+  return config;
 };
 
 // ─────────────────────────────────────────────
@@ -82,6 +151,36 @@ export function pipeComponent(data) {
           continue; // bloco fora do chunk carregado
         }
         if (!targetBlock) continue;
+
+        // ── Drawer Controller: extrai do drawer conectado adequado ──
+        if (isDrawerController(targetBlock)) {
+          const controllerItem = getControllerItem(targetBlock);
+          if (!controllerItem) continue;
+
+          const path = findPathForItem(block, controllerItem);
+          if (!path[0]) continue;
+
+          const pulled = pullItemFromController(targetBlock);
+          if (!pulled) continue;
+
+          spawnPipeVisual(dimension, pulled, targetBlock, block);
+          continue;
+        }
+
+        // ── Compact Drawer: usa a API própria de compactação ──
+        if (isCompactDrawer(targetBlock)) {
+          const drawerItem = getCompactDrawerItem(targetBlock);
+          if (!drawerItem) continue;
+
+          const path = findPathForItem(block, drawerItem);
+          if (!path[0]) continue;
+
+          const pulled = pullItemFromCompactDrawer(targetBlock);
+          if (!pulled) continue;
+
+          spawnPipeVisual(dimension, pulled, targetBlock, block);
+          continue;
+        }
 
         // ── Drawer: usa a API própria do drawer ──
         if (isDrawer(targetBlock)) {
@@ -207,7 +306,7 @@ function findPathForItem(startBlock, item, maxNodes = 512) {
       const opp = astraAPI.invertFace(face);
       if (isItemduct(neighbor) && isFaceBlocked(neighbor, opp)) continue;
 
-      if (containerBlock.includes(neighbor.typeId) || isDrawer(neighbor)) {
+      if (blocksConfig(neighbor) && neighbor.typeId !== 'rc_sd:pipe') {
         if (neighborKey !== startKey && canAcceptItem(neighbor, item)) {
           parentMap.set(neighborKey, currentKey);
           blockMap.set(neighborKey, neighbor);
@@ -266,13 +365,13 @@ function reFindPathForItem(startBlock, targetLocation, item, maxNodes = 512) {
       if (parentMap.has(neighborKey)) continue;
 
       if (neighborKey === targetKey) {
-        if (neighbor.typeId === "minecraft:air" || (!containerBlock.includes(neighbor.typeId) && !isDrawer(neighbor))) return [];
+        if (neighbor.typeId === "minecraft:air" || (!blocksConfig(neighbor) && neighbor.typeId !== 'rc_sd:pipe')) return [];
         parentMap.set(neighborKey, currentKey);
         blockMap.set(neighborKey, neighbor);
         return buildPath(parentMap, blockMap, neighborKey);
       }
 
-      if (containerBlock.includes(neighbor.typeId) || isDrawer(neighbor)) continue; // não expande containers que não são o target
+      if (blocksConfig(neighbor) && neighbor.typeId !== 'rc_sd:pipe') continue; // não expande containers que não são o target
 
       if (isItemduct(neighbor)) {
         parentMap.set(neighborKey, currentKey);
@@ -344,10 +443,9 @@ function getPullSides(block) {
 }
 
 function canAcceptItem(targetBlock, item) {
-  // Drawer: delega para a API dedicada
-  if (isDrawer(targetBlock)) {
-    return drawerCanAcceptItem(targetBlock, item);
-  }
+  if (isDrawer(targetBlock)) return drawerCanAcceptItem(targetBlock, item);
+  if (isCompactDrawer(targetBlock)) return compactDrawerCanAcceptItem(targetBlock, item);
+  if (isDrawerController(targetBlock)) return controllerCanAcceptItem(targetBlock, item);
 
   // Container normal
   try {
@@ -540,8 +638,7 @@ function moveEntity(entity, startBlock, endBlock, options = {}) {
 // Script event: atualiza rota da entidade visual
 // ─────────────────────────────────────────────
 
-mc.system.afterEvents.scriptEventReceive.subscribe(({ id, sourceEntity: entity }) => {
-  if (id !== "rc_sd:pipe_visual_item") return;
+mc.world.afterEvents.dataDrivenEntityTrigger.subscribe(({ entity }) => {
   if (!entity?.isValid) return;
 
   const block = entity.dimension.getBlock(entity.location);
@@ -566,7 +663,30 @@ mc.system.afterEvents.scriptEventReceive.subscribe(({ id, sourceEntity: entity }
     if (item) {
       const accepted = pushItemToDrawer(block, item);
       if (!accepted && entity.isValid) {
-        // Sem espaço no drawer: dropa o item no chão
+        block.dimension.spawnItem(item, block.center());
+      }
+    }
+    if (entity.isValid) entity.remove();
+    return;
+  }
+
+  // Se a entidade pousou num drawer controller: roteia para o drawer correto e remove
+  if (isDrawerController(block)) {
+    if (item) {
+      const accepted = pushItemToController(block, item);
+      if (!accepted && entity.isValid) {
+        block.dimension.spawnItem(item, block.center());
+      }
+    }
+    if (entity.isValid) entity.remove();
+    return;
+  }
+
+  // Se a entidade pousou num compact drawer: deposita via API compacta e remove
+  if (isCompactDrawer(block)) {
+    if (item) {
+      const accepted = pushItemToCompactDrawer(block, item);
+      if (!accepted && entity.isValid) {
         block.dimension.spawnItem(item, block.center());
       }
     }
@@ -575,7 +695,7 @@ mc.system.afterEvents.scriptEventReceive.subscribe(({ id, sourceEntity: entity }
   }
 
   // Se a entidade pousou num container normal: deposita e remove
-  if (containerBlock.includes(block.typeId)) {
+  if (blocksConfig(block) && block.typeId !== 'rc_sd:pipe') {
     const containerInv = block.getComponent("minecraft:inventory")?.container;
     if (item && containerInv) containerInv.addItem(item);
     if (entity.isValid) entity.remove();
@@ -600,4 +720,4 @@ mc.system.afterEvents.scriptEventReceive.subscribe(({ id, sourceEntity: entity }
       moveEntity(entity, block, nextBlock, { speed: MOVE_SPEED, yOffset: MOVE_Y_OFFSET });
     }
   }
-});
+}, { eventTypes: ["rc_sd:move"] });

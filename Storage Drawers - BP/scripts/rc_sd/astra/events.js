@@ -7,8 +7,8 @@ import SelectionBoxes from "./rc_sd/components/boxSelection";
 import { storageDrawerComponent } from "./rc_sd/components/storageDrawer";
 import { compactDrawerComponent } from "./rc_sd/components/compactDrawer";
 import { drawerControllerComponent } from "./rc_sd/components/drawerController";
-import { pipeComponent, connectBlock, disconnectBlock } from "./rc_sd/components/pipe";
-import { wrenchComponent, containerBlock } from "./rc_sd/components/wrench";
+import { pipeComponent, connectBlock, disconnectBlock, isContainer, map } from "./rc_sd/components/pipe";
+import { wrenchComponent } from "./rc_sd/components/wrench";
 
 import { beforeDrawerBreakComponent, afterHitComponent } from "./rc_sd/components/storageDrawer";
 
@@ -30,14 +30,25 @@ export function entityHitBlockEvent(data) {
 
 export function playerBreakBlockAfterEvent(data) {
     const { brokenBlockPermutation, block } = data
-    if (containerBlock.includes(brokenBlockPermutation.type.id)){
+
+    const itemsIds = Object.keys(map);
+    const itemsIdsSet = new Set(itemsIds);
+
+    function isContainerPerId(typeId) {
+        if (!typeId) return false;
+
+        return itemsIdsSet.has(typeId)
+        
+    }
+
+    if (isContainerPerId(brokenBlockPermutation.type.id)) {
         disconnectBlock(block, false)
     }
 }
 
 export function playerPlaceBlockAfterEvent(data) {
     const { block } = data
-    if (containerBlock.includes(block.typeId)){
+    if (isContainer(block)) {
         disconnectBlock(block, false)
     }
 }
@@ -125,10 +136,10 @@ export function runIntervalEvent() {
             });
 
             if (entity) {
-                if (!player.isSneaking) {
+                if (player.isSneaking) {
                     entity.triggerEvent('rc_sd:remove_collision');
                     player.setPropertyOverrideForEntity(entity, 'rc_sd:selection', false)
-                } else if (player.isSneaking && itemStack?.typeId !== "rc_sd:wrench") {
+                } else if (!player.isSneaking && itemStack?.typeId !== "rc_sd:wrench") {
                     entity.removeTag('rc_sd:validation')
                     entity.triggerEvent('rc_sd:set_block_collision');
                     player.setPropertyOverrideForEntity(entity, 'rc_sd:selection', true)

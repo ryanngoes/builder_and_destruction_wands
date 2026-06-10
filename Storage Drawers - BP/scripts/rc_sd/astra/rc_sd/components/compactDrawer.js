@@ -7,6 +7,8 @@ import {
     DrawerInventoryManager
 } from "../astraAPI.js";
 
+import { clearCompactVisuals } from "./storageDrawer.js";
+
 import FaceSelectionPlains from "./faceSelection.js";
 
 const isFrontFace = (block, face) =>
@@ -65,6 +67,20 @@ export function compactDrawerComponent(data) {
 
             const group = getGroup(referenceItem.typeId);
             if (!group) return;
+
+            // Drawer já guarda itens de outro grupo: só permite trocar se estiver vazia.
+            const storedItem = getVisualItem(dimension, center, 0)
+                ?.getComponent("minecraft:inventory")
+                ?.container
+                ?.getItem(0);
+
+            if (storedItem) {
+                const storedGroup = getGroup(storedItem.typeId);
+                if (storedGroup && storedGroup !== group) {
+                    const storedTotalBase = getCompactTotalBase(dimension, center, getGroupData(storedGroup));
+                    if (storedTotalBase > 0) return;
+                }
+            }
 
             const groupData = getGroupData(group);
             const clickedData = usableHandItem
@@ -211,6 +227,12 @@ function calculateAdd(itemStack, itemData, groupData, totalBase, maxBase) {
 }
 
 export function updateCompactVisuals({ block, dimension, center, inventoryEntity, groupData, totalBase, maxBase }) {
+    // Todos os slots zerados: limpa os visuais para permitir novo grupo entrar.
+    if (totalBase <= 0) {
+        clearCompactVisuals(block, inventoryEntity);
+        return;
+    }
+
     for (const data of groupData) {
         const visualItem = getVisualItem(dimension, center, data.relativeSlot);
         if (!visualItem) continue;
@@ -232,9 +254,8 @@ export function updateCompactVisuals({ block, dimension, center, inventoryEntity
         astraAPI.setItemSlot(displayItem, inventorySlot, inventoryEntity);
 
         const visual = astraAPI.formatVisualNumber(quantity);
-
-        for (const [key, value] of Object.entries(visual)) {
-            visualItem.setProperty(`rc_sd:${key}`, value);
+        for (const [key, val] of Object.entries(visual)) {
+            visualItem.setProperty(`rc_sd:${key}`, val);
         }
     }
 }
@@ -405,6 +426,65 @@ const compactItems = [
         "minecraft:clay": { relativeSlot: 0, amount: 4 },
         "minecraft:clay_ball": { relativeSlot: 1, amount: 4 },
     },
+
+    {
+        "minecraft:raw_iron_block": { relativeSlot: 0, amount: 9 },
+        "minecraft:raw_iron": { relativeSlot: 1, amount: 9 },
+    },
+    {
+        "minecraft:raw_gold_block": { relativeSlot: 0, amount: 9 },
+        "minecraft:raw_gold": { relativeSlot: 1, amount: 9 },
+    },
+    {
+        "minecraft:raw_copper_block": { relativeSlot: 0, amount: 9 },
+        "minecraft:raw_copper": { relativeSlot: 1, amount: 9 },
+    },
+    {
+        "minecraft:netherite_block": { relativeSlot: 0, amount: 9 },
+        "minecraft:netherite_ingot": { relativeSlot: 1, amount: 9 },
+    },
+    {
+        "minecraft:slime": { relativeSlot: 0, amount: 9 },
+        "minecraft:slime_ball": { relativeSlot: 1, amount: 9 },
+    },
+    {
+        "minecraft:dried_kelp_block": { relativeSlot: 0, amount: 9 },
+        "minecraft:dried_kelp": { relativeSlot: 1, amount: 9 },
+    },
+    {
+        "minecraft:melon_block": { relativeSlot: 0, amount: 9 },
+        "minecraft:melon_slice": { relativeSlot: 1, amount: 9 },
+    },
+
+    {
+        "minecraft:packed_ice": { relativeSlot: 0, amount: 9 },
+        "minecraft:ice": { relativeSlot: 1, amount: 9 },
+    },
+    {
+        "minecraft:blue_ice": { relativeSlot: 0, amount: 9 },
+        "minecraft:packed_ice": { relativeSlot: 1, amount: 9 },
+    },
+
+    {
+        "minecraft:honey_block": { relativeSlot: 0, amount: 4 },
+        "minecraft:honey_bottle": { relativeSlot: 1, amount: 4 },
+    },
+    {
+        "minecraft:honeycomb_block": { relativeSlot: 0, amount: 4 },
+        "minecraft:honeycomb": { relativeSlot: 1, amount: 4 },
+    },
+    {
+        "minecraft:amethyst_block": { relativeSlot: 0, amount: 4 },
+        "minecraft:amethyst_shard": { relativeSlot: 1, amount: 4 },
+    },
+    {
+        "minecraft:brick_block": { relativeSlot: 0, amount: 4 },
+        "minecraft:brick": { relativeSlot: 1, amount: 4 },
+    },
+    {
+        "minecraft:nether_brick": { relativeSlot: 0, amount: 4 },
+        "minecraft:netherbrick": { relativeSlot: 1, amount: 4 },
+    },
 ];
 
 export function getGroupData(group) {
@@ -421,4 +501,143 @@ export function getGroup(itemId) {
 
 export function getItemGroupData(groupData, itemId) {
     return groupData.find(data => data.itemId === itemId);
+}
+
+// ─────────────────────────────────────────────
+// Integração com o pipe
+// ─────────────────────────────────────────────
+
+export function isCompactDrawer(block) {
+    return block?.typeId === "rc_sd:compact_drawer";
+}
+
+/** Retorna o item de menor denominação disponível (para o pipe saber o que pode extrair). */
+export function getCompactDrawerItem(block) {
+    const center = block.center();
+    const dimension = block.dimension;
+
+    const existingGroup = astraAPI.getExistingCompactGroup(dimension, center);
+    if (!existingGroup) return null;
+
+    const groupData = getGroupData(existingGroup);
+    const totalBase = getCompactTotalBase(dimension, center, groupData);
+    if (totalBase <= 0) return null;
+
+    const sorted = [...groupData].sort((a, b) => b.relativeSlot - a.relativeSlot);
+    for (const itemData of sorted) {
+        const value = getCompactSlotValue(itemData.relativeSlot, groupData);
+        if (totalBase >= value) return new mc.ItemStack(itemData.itemId, 1);
+    }
+    return null;
+}
+
+/** Retira 1 item (menor denominação disponível) do compact drawer. */
+export function pullItemFromCompactDrawer(block) {
+    const center = block.center();
+    const dimension = block.dimension;
+
+    const existingGroup = astraAPI.getExistingCompactGroup(dimension, center);
+    if (!existingGroup) return null;
+
+    const groupData = getGroupData(existingGroup);
+    let totalBase = getCompactTotalBase(dimension, center, groupData);
+    if (totalBase <= 0) return null;
+
+    const inventoryEntity = getDrawerInventoryEntity(dimension, center);
+    if (!inventoryEntity) return null;
+
+    const drawerInventory = inventoryEntity.getComponent("minecraft:inventory")?.container;
+    if (!drawerInventory) return null;
+
+    const params = block.getComponent("rc_sd:compact_drawer")?.customComponentParameters?.params;
+    if (!params) return null;
+
+    const baseValue0 = getCompactSlotValue(0, groupData);
+    const maxQuantity = DrawerInventoryManager.getStorageLimit(params.amount_per_slot, drawerInventory);
+    const maxBase = maxQuantity * baseValue0;
+
+    const sorted = [...groupData].sort((a, b) => b.relativeSlot - a.relativeSlot);
+    for (const itemData of sorted) {
+        const value = getCompactSlotValue(itemData.relativeSlot, groupData);
+        if (totalBase < value) continue;
+
+        updateCompactVisuals({ block, dimension, center, inventoryEntity, groupData, totalBase: totalBase - value, maxBase });
+        return new mc.ItemStack(itemData.itemId, 1);
+    }
+    return null;
+}
+
+/** Insere 1 item no compact drawer. Retorna true se aceito. */
+export function pushItemToCompactDrawer(block, item) {
+    const group = getGroup(item?.typeId);
+    if (!group) return false;
+
+    const center = block.center();
+    const dimension = block.dimension;
+
+    const existingGroup = astraAPI.getExistingCompactGroup(dimension, center);
+    if (!existingGroup && block.permutation.getState("rc_sd:lock") === true) return false;
+    if (existingGroup && existingGroup !== group) return false;
+
+    const useGroup = existingGroup ?? group;
+    const groupData = getGroupData(useGroup);
+    const itemData = getItemGroupData(groupData, item.typeId);
+    if (!itemData) return false;
+
+    const inventoryEntity = getDrawerInventoryEntity(dimension, center);
+    if (!inventoryEntity) return false;
+
+    const drawerInventory = inventoryEntity.getComponent("minecraft:inventory")?.container;
+    if (!drawerInventory) return false;
+
+    const params = block.getComponent("rc_sd:compact_drawer")?.customComponentParameters?.params;
+    if (!params) return false;
+
+    const baseValue0 = getCompactSlotValue(0, groupData);
+    const maxQuantity = DrawerInventoryManager.getStorageLimit(params.amount_per_slot, drawerInventory);
+    const maxBase = maxQuantity * baseValue0;
+
+    const totalBase = getCompactTotalBase(dimension, center, groupData);
+    if (totalBase >= maxBase) return false;
+
+    const value = getCompactSlotValue(itemData.relativeSlot, groupData);
+    if (maxBase - totalBase < value) return false;
+
+    updateCompactVisuals({ block, dimension, center, inventoryEntity, groupData, totalBase: totalBase + value, maxBase });
+    return true;
+}
+
+/** Verifica se o compact drawer pode receber um item. */
+export function compactDrawerCanAcceptItem(block, item) {
+    const group = getGroup(item?.typeId);
+    if (!group) return false;
+
+    const center = block.center();
+    const dimension = block.dimension;
+
+    const existingGroup = astraAPI.getExistingCompactGroup(dimension, center);
+    if (!existingGroup && block.permutation.getState("rc_sd:lock") === true) return false;
+    if (existingGroup && existingGroup !== group) return false;
+
+    const useGroup = existingGroup ?? group;
+    const groupData = getGroupData(useGroup);
+    const itemData = getItemGroupData(groupData, item.typeId);
+    if (!itemData) return false;
+
+    const inventoryEntity = getDrawerInventoryEntity(dimension, center);
+    if (!inventoryEntity) return false;
+
+    const drawerInventory = inventoryEntity.getComponent("minecraft:inventory")?.container;
+    if (!drawerInventory) return false;
+
+    const params = block.getComponent("rc_sd:compact_drawer")?.customComponentParameters?.params;
+    if (!params) return false;
+
+    const baseValue0 = getCompactSlotValue(0, groupData);
+    const maxQuantity = DrawerInventoryManager.getStorageLimit(params.amount_per_slot, drawerInventory);
+    const maxBase = maxQuantity * baseValue0;
+    const totalBase = getCompactTotalBase(dimension, center, groupData);
+    const value = getCompactSlotValue(itemData.relativeSlot, groupData);
+
+    return maxBase - totalBase >= value;
 }

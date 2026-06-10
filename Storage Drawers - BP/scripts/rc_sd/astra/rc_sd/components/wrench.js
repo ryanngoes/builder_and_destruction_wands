@@ -1,6 +1,8 @@
 import * as mc from "@minecraft/server";
 import * as astraAPI from "../astraAPI.js";
 
+import { blocksConfig } from "./pipe.js";
+
 export function setPermutation(block, stateAdd, stateValue) {
   const result = block.permutation.getAllStates();
   result[stateAdd] = stateValue;
@@ -16,15 +18,6 @@ export function invertFace(face) {
   if (face == 'east') return 'west'
 
 }
-
-export const containerBlock = [
-  "minecraft:chest",
-  "minecraft:furnace",
-  "minecraft:lit_furnace",
-  "minecraft:barrel",
-  "minecraft:hopper",
-  "minecraft:dispenser",
-];
 
 export function wrenchComponent(data) {
   data.itemComponentRegistry.registerCustomComponent("rc_sd:wrench", {
@@ -43,7 +36,7 @@ export function wrenchComponent(data) {
       if (!face) return;
 
       const neighbor = block[face]?.();
-      if (!neighbor || block.typeId === 'rc_sd:pipe') return;
+      if (!neighbor || block.typeId === 'rc_sd:pipe' || !blocksConfig(block)) return;
 
       if (neighbor.typeId !== "rc_sd:pipe") return;
 
